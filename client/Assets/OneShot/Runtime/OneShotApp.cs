@@ -32,10 +32,10 @@ namespace OneShot.Client {
   void OnApplicationPause(bool paused){if(paused&&busy)lifetime.Cancel();} // competitive resume not yet implemented
   void Clear(){root.Clear();}
   Label Text(string text,int size=24){var l=new Label(text);l.style.fontSize=size;l.style.color=art.ink;l.style.whiteSpace=WhiteSpace.Normal;l.style.marginBottom=12;root.Add(l);return l;}
-  Button Button(string title,Action action,bool primary=false){var b=new Button(action){text=title};b.style.height=72;b.style.marginTop=14;b.style.fontSize=24;b.style.backgroundColor=primary?art.ink:Color.white;b.style.color=primary?art.accent:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
+  Button Button(string title,Action action,bool primary=false){var b=new Button(action){text=title};b.style.height=72;b.style.minHeight=64;b.style.flexShrink=0;b.style.marginTop=14;b.style.fontSize=24;b.style.backgroundColor=primary?art.ink:Color.white;b.style.color=primary?art.accent:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
   void Spacer(){var s=new VisualElement();s.style.flexGrow=1;root.Add(s);}
-  void Home(){if(lifetime.IsCancellationRequested){lifetime.Dispose();lifetime=new CancellationTokenSource();}Clear();busy=false;if(art.logo!=null){var logo=new Image{image=art.logo};logo.style.height=48;logo.style.width=180;root.Add(logo);}else Text("ONE SHOT",28);Text(L("copy_001"),54);Text(L("copy_002"));
-   var visual=new ToyCanvas{Kind="collection",Theme=art};visual.style.height=310;root.Add(visual);Spacer();
+  void Home(){if(lifetime.IsCancellationRequested){lifetime.Dispose();lifetime=new CancellationTokenSource();}Clear();busy=false;if(art.logo!=null){var logo=new Image{image=art.logo};logo.style.height=48;logo.style.width=180;root.Add(logo);}else Text("ONE SHOT",28);Text(L("copy_001"),48);Text(L("copy_002"));
+   var visual=new ToyCanvas{Kind="collection",Theme=art};visual.style.height=310;visual.style.minHeight=180;visual.style.flexShrink=1;root.Add(visual);Spacer();
    Button(L("copy_003"),OpenDaily,true);
    Button(L("copy_004"),()=>PlayPractice());
    Text(L("copy_005"),18);
@@ -72,19 +72,20 @@ namespace OneShot.Client {
     Clear();Text(round.game.ToUpperInvariant()+" · "+(i+1)+"/3",22);
     Text(round.game=="slice"?L("copy_043"):round.game=="park"?L("copy_044"):L("copy_045"),38);
     var config=round.trials[i];Text(round.game=="slice"?(config.target/100f).ToString("0")+" / "+(100-config.target/100f).ToString("0"):round.game=="park"?L("copy_046"):L("copy_047"),24);
-    var toy=new ToyCanvas{Kind=round.game,Theme=art,Config=config};toy.style.height=430;toy.style.flexGrow=1;root.Add(toy);var progress=Text("5.0 SEC",20);
+    var toy=new ToyCanvas{Kind=round.game,Theme=art,Config=config};toy.style.height=430;toy.style.minHeight=240;toy.style.flexShrink=1;toy.style.flexGrow=1;root.Add(toy);var progress=Text("5.0 SEC",20);
     var events=new List<GameEvent>();var hits=new HashSet<int>();bool used=false;int trialScore=0;double start=Time.realtimeSinceStartupAsDouble;Vector2 down=Vector2.zero;
-    toy.RegisterCallback<PointerDownEvent>(e=>{down=e.localPosition;toy.CapturePointer(e.pointerId);});
+    int activePointer=-1;
+    toy.RegisterCallback<PointerDownEvent>(e=>{if(activePointer!=-1)return;activePointer=e.pointerId;down=e.localPosition;toy.CapturePointer(e.pointerId);});
+    toy.RegisterCallback<PointerCancelEvent>(e=>{if(e.pointerId==activePointer){activePointer=-1;toy.ReleasePointer(e.pointerId);}});
     toy.RegisterCallback<PointerUpEvent>(e=>{
-     toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
+     if(e.pointerId!=activePointer)return;activePointer=-1;toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
      int x=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.x/toy.resolvedStyle.width*10000),0,10000),y=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.y/toy.resolvedStyle.height*10000),0,10000);
      if(events.Count>0&&time<=events[events.Count-1].t)return;
      if(round.game=="slice"){
-      if(used||Mathf.Abs(e.localPosition.y-down.y)<40)return;used=true;
-      // Object spans x=.15..85 of stage. Cut must cross its vertical extent.
-      float h=toy.resolvedStyle.height;if(Mathf.Min(down.y,e.localPosition.y)>h*.32f||Mathf.Max(down.y,e.localPosition.y)<h*.68f){used=false;return;}
-      float crossing=Mathf.Lerp(down.x,e.localPosition.x,(h*.5f-down.y)/(e.localPosition.y-down.y));
-      int cut=Mathf.Clamp(Mathf.RoundToInt((crossing/toy.resolvedStyle.width-.15f)/.7f*10000),0,10000);events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;
+      if(used)return;
+      if(!SliceGeometry.TryCut(toy.resolvedStyle.width,toy.resolvedStyle.height,down.x,down.y,e.localPosition.x,e.localPosition.y,out int cut))return;
+      used=true;
+      events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;
      }else if(round.game=="park"){
       if(used)return;used=true;events.Add(new GameEvent{type="brake",t=time});toy.Stopped=true;toy.Position=(int)((long)time*config.speedPerSecond/1000);trialScore=toy.Position>10000?0:Scoring.Precision(toy.Position,config.target,config.tolerance);
      }else{

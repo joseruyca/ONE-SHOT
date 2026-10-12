@@ -25,6 +25,10 @@ class Program {
  static void Check(bool condition,string name){if(!condition)throw new Exception(name);Console.WriteLine("PASS "+name);}
  static async Task MustFail(Func<Task> f){bool failed=false;try{await f();}catch{failed=true;}if(!failed)throw new Exception("Expected failure");}
  static async Task Main(){
+  Check(SliceGeometry.TryCut(100,100,40.9,0,40.9,100,out var cut)&&cut==3700,"slice crossing ratio");
+  Check(!SliceGeometry.TryCut(100,100,0,0,0,100,out _),"outside object is not a cut");
+  Check(!SliceGeometry.TryCut(100,100,40,40,40,60,out _),"short gesture is not a cut");
+  Check(!SliceGeometry.TryCut(100,100,double.NaN,0,40,100,out _),"nonfinite gesture rejected");
   Check(Scoring.Precision(3700,3700,5000)==10000,"perfect precision");
   Check(Scoring.Precision(9000,3700,5000)==0,"bounded precision");
   var gateway=new Gateway();var runner=new ShotRunner(gateway,_=>new Game());

@@ -34,3 +34,8 @@ Cero costes autorizados. Ningún plan de pago, cargo, dominio ni contratación a
 Schema aplicado en Supabase real, API competition activa, configuración pública Unity conectada. QA transaccional real superado (fixtures rollback). Tres checks HTTP reales: sin sesión 401; publishable key sin sesión 401; RPC privilegiada 401. No se ha probado flujo con JWT de usuario real ni cliente móvil.
 Security advisors: solo INFO por RLS sin políticas (deny por defecto, tablas privadas sin acceso de clientes). Performance: índice nuevo todavía sin uso. Competition/ads/reload desactivados hasta QA autenticado y primera build. No hay Shot activo ni usuarios finales creados.
 CI tras conectar backend: SUCCESS https://github.com/joseruyca/ONE-SHOT/actions/runs/38256022409. Compilación Unity sigue pendiente de licencia/entorno autorizado.
+
+## 0.2.1 — preparación Windows
+Propietario ha activado Unity Personal en su ordenador y está instalando 6000.3.26f1 + Android/OpenJDK/SDK/NDK. Este entorno del agente sigue sin Unity.
+Script Windows creado para descargar un commit concreto, preservar carpetas existentes, abrir proyecto o generar APK y mostrar log si falla. No ejecutado en Windows todavía.
+Corregidos inputs simultáneos/cancelados, gestos fuera del objeto Slice y tamaños mínimos de controles. Pruebas de geometría añadidas al CI; comprobar ejecución antes de afirmar validación.
