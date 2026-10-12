@@ -1,0 +1,15 @@
+Library/
+Temp/
+Obj/
+Logs/
+Builds/
+UserSettings/
+node_modules/
+bin/
+obj/
+.env
+.env.*
+!.env.example
+*.keystore
+*.p12
+*.mobileprovision
