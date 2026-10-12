@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {precisionScore,evaluateRound,evaluateShot,worldStanding} from '../core/scoring.mjs';
+const slice={game:'slice',durationMs:15000,target:3700,tolerance:5000};
+const park={game:'park',durationMs:15000,target:8000,tolerance:3000,speedPerSecond:1000};
+const mosquito={game:'mosquito',durationMs:15000,windows:[{start:1000,end:1500,x:5000,y:5000,radius:1000},{start:3000,end:3500,x:2000,y:2000,radius:500}]};
+test('perfect and missed cuts',()=>{assert.equal(evaluateRound(slice,[{type:'cut',t:100,x:3700}]),10000);assert.equal(evaluateRound(slice,[]),0);assert.equal(precisionScore(9000,3700,5000),0);});
+test('precision monotonically decreases and stays bounded',()=>{let last=10000;for(let error=0;error<=5000;error++){const s=precisionScore(3700+error,3700,5000);assert.ok(s>=0&&s<=last);last=s;}});
+test('parking uses time, collision gives zero',()=>{assert.equal(evaluateRound(park,[{type:'brake',t:8000}]),10000);assert.equal(evaluateRound(park,[{type:'brake',t:12000}]),0);});
+test('duplicate mosquito hits penalize rather than awarding again',()=>{const tap={type:'tap',t:1100,x:5000,y:5000};assert.equal(evaluateRound(mosquito,[tap]),5000);assert.equal(evaluateRound(mosquito,[tap,{...tap,t:1200}]),4500);});
+test('spatial miss and time miss penalize',()=>{assert.equal(evaluateRound(mosquito,[{type:'tap',t:1200,x:0,y:0}]),0);assert.equal(evaluateRound(mosquito,[{type:'tap',t:2000,x:5000,y:5000}]),0);});
+test('forged scores are ignored, full shot deterministically recalculated',()=>{const input=[[{type:'cut',t:100,x:3700,score:0}],[{type:'brake',t:8000,score:900000}],[{type:'tap',t:1100,x:5000,y:5000},{type:'tap',t:3100,x:2000,y:2000}]];assert.equal(evaluateShot([slice,park,mosquito],input).total,30000);assert.deepEqual(evaluateShot([slice,park,mosquito],input),evaluateShot([slice,park,mosquito],input));});
+test('negative, non-finite, oversized and unordered evidence rejected',()=>{for(const x of [-1,10001,NaN,Infinity,0.5])assert.throws(()=>evaluateRound(slice,[{type:'cut',t:100,x}]));assert.throws(()=>evaluateRound(slice,[{type:'cut',t:15001,x:3700}]));assert.throws(()=>evaluateRound(mosquito,[{type:'tap',t:1200},{type:'tap',t:1100}]));assert.throws(()=>evaluateRound(slice,Array(129).fill({type:'cut',t:100,x:3700})));});
+test('unknown games and incomplete shots rejected',()=>{assert.throws(()=>evaluateRound({...slice,game:'fake'},[]));assert.throws(()=>evaluateShot([slice],[[]]));});
+test('malformed configurations are rejected even without input',()=>{assert.throws(()=>evaluateRound({...slice,target:NaN},[]));assert.throws(()=>evaluateRound({...park,speedPerSecond:0},[]));assert.throws(()=>evaluateRound({...mosquito,windows:[mosquito.windows[0],mosquito.windows[0]]},[]));});
+test('ranking ties and empty population',()=>{assert.equal(worldStanding([],0),null);assert.deepEqual(worldStanding([100,200,200,300],200),{rank:2,population:4,topPercent:50});assert.equal(worldStanding([100],100).topPercent,100);assert.throws(()=>worldStanding([100],200));});
+test('compound three-trial rounds average equally and reject mismatched config',()=>{const round={game:'slice',durationMs:15000,trials:Array(3).fill({...slice,durationMs:5000})};assert.equal(evaluateRound(round,[[{type:'cut',t:100,x:3700}],[],[]]),3333);assert.throws(()=>evaluateRound(round,[[],[]]));assert.throws(()=>evaluateRound({...round,durationMs:14000},[[],[],[]]));});

@@ -1,0 +1,244 @@
+{
+  "entries": [
+    {
+      "key": "copy_001",
+      "es": "Tu minuto. Tu marca.",
+      "en": "Your minute. Your mark."
+    },
+    {
+      "key": "copy_002",
+      "es": "Tres pruebas. Una puntuación.",
+      "en": "Three challenges. One score."
+    },
+    {
+      "key": "copy_003",
+      "es": "SHOT DE HOY →",
+      "en": "TODAY'S SHOT →"
+    },
+    {
+      "key": "copy_004",
+      "es": "Practicar",
+      "en": "Practice"
+    },
+    {
+      "key": "copy_005",
+      "es": "La práctica no cuenta en el ranking.",
+      "en": "Practice does not enter the ranking."
+    },
+    {
+      "key": "copy_006",
+      "es": "Competición pendiente de activar",
+      "en": "Competition not active"
+    },
+    {
+      "key": "copy_007",
+      "es": "El servidor todavía no está provisionado. Puedes jugar las tres pruebas en práctica.",
+      "en": "The server has not been provisioned yet. You can play all three challenges in practice."
+    },
+    {
+      "key": "copy_008",
+      "es": "Buscando el Shot…",
+      "en": "Finding today's Shot…"
+    },
+    {
+      "key": "copy_009",
+      "es": "No hay Shot activo",
+      "en": "No active Shot"
+    },
+    {
+      "key": "copy_010",
+      "es": "Vuelve cuando se publique el próximo.",
+      "en": "Come back when the next one is published."
+    },
+    {
+      "key": "copy_011",
+      "es": "3 PRUEBAS · ",
+      "en": "3 ROUNDS · "
+    },
+    {
+      "key": "copy_012",
+      "es": "Al empezar se consume tu intento.",
+      "en": "Starting consumes your attempt."
+    },
+    {
+      "key": "copy_013",
+      "es": "EMPEZAR →",
+      "en": "START →"
+    },
+    {
+      "key": "copy_014",
+      "es": "Volver",
+      "en": "Back"
+    },
+    {
+      "key": "copy_015",
+      "es": "No hemos podido conectar",
+      "en": "Could not connect"
+    },
+    {
+      "key": "copy_016",
+      "es": "Tu intento todavía no se ha iniciado.",
+      "en": "Your attempt has not started yet."
+    },
+    {
+      "key": "copy_017",
+      "es": "Entra para competir",
+      "en": "Sign in to compete"
+    },
+    {
+      "key": "copy_018",
+      "es": "La práctica funciona sin cuenta.",
+      "en": "Practice works without an account."
+    },
+    {
+      "key": "copy_019",
+      "es": "Correo",
+      "en": "Email"
+    },
+    {
+      "key": "copy_020",
+      "es": "Contraseña",
+      "en": "Password"
+    },
+    {
+      "key": "copy_021",
+      "es": "ENTRAR",
+      "en": "SIGN IN"
+    },
+    {
+      "key": "copy_022",
+      "es": "No se ha podido iniciar sesión.",
+      "en": "Sign in failed."
+    },
+    {
+      "key": "copy_023",
+      "es": "Volver",
+      "en": "Back"
+    },
+    {
+      "key": "copy_024",
+      "es": "Partida pendiente",
+      "en": "Attempt pending"
+    },
+    {
+      "key": "copy_025",
+      "es": "No iniciamos otra partida para evitar duplicar intentos.",
+      "en": "We will not start another attempt."
+    },
+    {
+      "key": "copy_026",
+      "es": "Reenviar resultado",
+      "en": "Retry submission"
+    },
+    {
+      "key": "copy_027",
+      "es": "Inicio",
+      "en": "Home"
+    },
+    {
+      "key": "copy_028",
+      "es": "Aún no se ha podido confirmar.",
+      "en": "Not confirmed yet."
+    },
+    {
+      "key": "copy_029",
+      "es": "Práctica interrumpida",
+      "en": "Practice interrupted"
+    },
+    {
+      "key": "copy_030",
+      "es": "No cuenta como intento competitivo.",
+      "en": "It does not count as a competitive attempt."
+    },
+    {
+      "key": "copy_031",
+      "es": "PRÁCTICA",
+      "en": "PRACTICE"
+    },
+    {
+      "key": "copy_032",
+      "es": "RESULTADO CONFIRMADO",
+      "en": "VERIFIED RESULT"
+    },
+    {
+      "key": "copy_033",
+      "es": "Tres pruebas. Una marca.",
+      "en": "Three challenges. One mark."
+    },
+    {
+      "key": "copy_034",
+      "es": "Ver posición mundial",
+      "en": "World standing"
+    },
+    {
+      "key": "copy_035",
+      "es": "Otra práctica",
+      "en": "Practice again"
+    },
+    {
+      "key": "copy_036",
+      "es": "Inicio",
+      "en": "Home"
+    },
+    {
+      "key": "copy_037",
+      "es": "Inicio",
+      "en": "Home"
+    },
+    {
+      "key": "copy_038",
+      "es": "Aún hay pocos resultados para comparar.",
+      "en": "Too few results for a meaningful comparison."
+    },
+    {
+      "key": "copy_039",
+      "es": "Participantes: ",
+      "en": "Players: "
+    },
+    {
+      "key": "copy_040",
+      "es": " · provisional",
+      "en": " · provisional"
+    },
+    {
+      "key": "copy_041",
+      "es": "Ranking no disponible.",
+      "en": "Ranking unavailable."
+    },
+    {
+      "key": "copy_042",
+      "es": "Inicio",
+      "en": "Home"
+    },
+    {
+      "key": "copy_043",
+      "es": "Corta la proporción",
+      "en": "Cut the ratio"
+    },
+    {
+      "key": "copy_044",
+      "es": "Frena en la plaza",
+      "en": "Stop in the space"
+    },
+    {
+      "key": "copy_045",
+      "es": "Atrapa al mosquito",
+      "en": "Catch the mosquito"
+    },
+    {
+      "key": "copy_046",
+      "es": "Toca para frenar",
+      "en": "Tap to brake"
+    },
+    {
+      "key": "copy_047",
+      "es": "Toca cuando aparezca",
+      "en": "Tap when it appears"
+    },
+    {
+      "key": "copy_048",
+      "es": "MARCA ESTIMADA",
+      "en": "ESTIMATED PERFORMANCE"
+    }
+  ]
+}

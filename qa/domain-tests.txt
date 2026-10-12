@@ -1,0 +1,9 @@
+PASS perfect precision
+PASS bounded precision
+PASS verified result only
+PASS three rounds disposed
+PASS double start prevented
+PASS network failure keeps pending evidence
+PASS submit retry does not replay
+PASS incomplete shot never submitted
+PASS interrupted attempt cannot locally restart

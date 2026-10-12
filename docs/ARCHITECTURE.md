@@ -1,0 +1,10 @@
+# Arquitectura
+Cliente Unity C#: presentación, entrada táctil, simulación determinista, audio y vibración; dominio independiente de UnityEngine. Backend Supabase: Auth, Postgres, funciones de servicio; configs/attempts/scores/Crews. Firebase propuesto para FCM, Crashlytics y analytics para limitar proveedores. Ningún SDK instalado todavía.
+ShotRunner orquesta tres IMicrogame y envía evidencias; los microgames no publican ranking. ICompetitionGateway será el adaptador de red. El score local es estimación, no resultado autoritativo.
+Preferencia Unity 6.3 LTS por horizonte de soporte. Patch exacto pendiente de comprobar en Build Automation con SDK36 y Xcode26; no inventar ProjectVersion ni lockfiles. Validación IL2CPP y stripping de SDK C# antes de adoptarlo; alternativa HTTP con UnityWebRequest y DTO si falla.
+Simulación lógica con tiempo entero y coordenadas normalizadas; render puede usar física cosmética pero no PhysX como fuente competitiva entre Android/iOS. Fixed step común; señales táctiles con monotonic clock, sin dependencia de resolución/FPS.
+Config versionada por juego y scoring. Config hash calculado por servidor, almacenado junto al intento. Seed igual para todos, generador explícito; no System.Random compartido como protocolo.
+API planificada: GET today (sin parámetros antes de consumir intento); POST start con idempotency key; POST evidence; GET results; crew create/join; SSV reward callback. Límite de payload/tiempo/rate por endpoint.
+Persistencia prevista: start y submit en transacciones, unicidad por usuario/Shot/ordinal, locks por usuario/Shot. Idempotencia persiste y devuelve misma respuesta. No conceder intento en fallback offline.
+Ranking calculado desde resultados validados, oculto por servidor antes de completar. Crews restringidas a miembros. Percentil provisional durante día, definitivo al cierre; excluir invalidados y una fila por jugador.
+Este paquete contiene dominio y evaluador; todavía no contiene la API, adaptador Supabase, proyecto Unity importado ni infraestructura desplegada.

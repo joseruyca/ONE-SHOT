@@ -1,0 +1,24 @@
+✔ schema executes and client roles have no table/RPC access (1521.20315ms)
+✔ start idempotency, consumed attempt, other owner, early submit (1094.419158ms)
+✔ successful submit, retry, tampering, ranking and invalidation (1116.692101ms)
+✔ kill switch and expired deadlines block submission (1105.172198ms)
+✔ active config cannot change but can be disabled (1153.082379ms)
+✔ perfect and missed cuts (1.071663ms)
+✔ precision monotonically decreases and stays bounded (1.459005ms)
+✔ parking uses time, collision gives zero (0.146316ms)
+✔ duplicate mosquito hits penalize rather than awarding again (0.148459ms)
+✔ spatial miss and time miss penalize (0.42717ms)
+✔ forged scores are ignored, full shot deterministically recalculated (0.83941ms)
+✔ negative, non-finite, oversized and unordered evidence rejected (0.416525ms)
+✔ unknown games and incomplete shots rejected (0.199806ms)
+✔ malformed configurations are rejected even without input (0.298741ms)
+✔ ranking ties and empty population (0.553207ms)
+✔ compound three-trial rounds average equally and reject mismatched config (0.376626ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6115.30087
