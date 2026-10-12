@@ -38,4 +38,4 @@ CI tras conectar backend: SUCCESS https://github.com/joseruyca/ONE-SHOT/actions/
 ## 0.2.1 — preparación Windows
 Propietario ha activado Unity Personal en su ordenador y está instalando 6000.3.26f1 + Android/OpenJDK/SDK/NDK. Este entorno del agente sigue sin Unity.
 Script Windows creado para descargar un commit concreto, preservar carpetas existentes, abrir proyecto o generar APK y mostrar log si falla. No ejecutado en Windows todavía.
-Corregidos inputs simultáneos/cancelados, gestos fuera del objeto Slice y tamaños mínimos de controles. Pruebas de geometría añadidas al CI; comprobar ejecución antes de afirmar validación.
+Corregidos inputs simultáneos/cancelados, gestos fuera del objeto Slice y tamaños mínimos de controles. Pruebas de geometría añadidas al CI; ejecución completada con éxito en main/develop para 11d28184f8518727ae8ccd1628643727cd005283. Backend y núcleo C# verdes. Script Windows/cliente Unity todavía no ejecutados.
