@@ -23,7 +23,7 @@ No publicar esta entrega como versión comercial. Default competition/ads/reload
 
 ## Bloqueos concretos
 Conector Supabase permite listar pero get_cost retorna UNAVAILABLE. Organización elegida: joseruyca's projects. No se ha obtenido coste ni creado proyecto.
-Repositorio creado por propietario: joseruyca/ONE-SHOT, público. Permiso de integración habilitado 2026-10-12. Fuente subida y verificada en main (04abec429bee1c318272b7bd9319bc51fce02b0d); rama develop creada. CI añadido en 228d766397361f81c14ba1b7063993f75b94e403, pendiente comprobar resultado. Documento original OWNER_BRIEF.txt excluido del repositorio público.
+Repositorio creado por propietario: joseruyca/ONE-SHOT, público. Permiso de integración habilitado 2026-10-12. Fuente subida y verificada en main (04abec429bee1c318272b7bd9319bc51fce02b0d); rama develop creada. CI añadido y verificado: backend y csharp-domain SUCCESS en https://github.com/joseruyca/ONE-SHOT/actions/runs/38255169864 (código 7fa74c0c3877650f1ccbc0cd1b29c586fcfe2714). Documento original OWNER_BRIEF.txt excluido del repositorio público.
 Navegador alternativo requiere login del propietario, que usa contraseñas guardadas en su Chrome. No pedir contraseña por chat ni asumir sesión local disponible.
 No hay Unity/licencia/Android toolchain en este entorno. Compilación con cuenta y entorno autorizado pendiente; no activar servicios de pago ni pruebas con facturación.
 
