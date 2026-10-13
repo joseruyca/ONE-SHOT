@@ -30,9 +30,9 @@ $qaLog=Join-Path $ProjectRoot 'UNITY_IMPORT_QA.log'
 $qaReport=Join-Path $client 'Builds\IMPORT_QA.txt'
 if(Test-Path $qaReport){Remove-Item -LiteralPath $qaReport}
 Write-Host 'Comprobando compilacion e importacion en Unity. Puede tardar unos minutos.'
-$check=Start-Process $editor -ArgumentList ('-batchmode -nographics -quit -projectPath "'+$client+'" -executeMethod OneShot.Editor.Validation.Check -logFile "'+$qaLog+'"') -Wait -PassThru
+$check=Start-Process $editor -ArgumentList ('-batchmode -quit -projectPath "'+$client+'" -executeMethod OneShot.Editor.Validation.Check -logFile "'+$qaLog+'"') -Wait -PassThru
 if($check.ExitCode -ne 0 -or -not(Test-Path $qaReport)){
- if(Test-Path $qaLog){Get-Content -LiteralPath $qaLog -Tail 40}
+ if(Test-Path $qaLog){Get-Content -LiteralPath $qaLog -Tail 100}
  throw "Unity no ha validado esta revision. Log: $qaLog. Archivos anteriores: $backup"
 }
 Write-Host "ONE SHOT actualizado e importado: $sha" -ForegroundColor Green

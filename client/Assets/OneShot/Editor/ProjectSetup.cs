@@ -16,8 +16,20 @@ namespace OneShot.Editor {
    PlayerSettings.companyName="ONE SHOT";PlayerSettings.productName="ONE SHOT";PlayerSettings.bundleVersion="0.5.0";
    PlayerSettings.defaultInterfaceOrientation=UIOrientation.Portrait;
    PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,"com.oneshot.daily");PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS,"com.oneshot.daily");
-   AssetDatabase.SaveAssets();
+   EnsureStudioArt();AssetDatabase.SaveAssets();
   }
+  public static void EnsureStudioArt(){
+   foreach(var name in new[]{"Hero","HeroWide","Toys"}){
+    string path="Assets/Resources/Studio/"+name+".png";
+    if(!File.Exists(path))throw new System.Exception("Artwork file missing: "+path);
+    AssetDatabase.ImportAsset(path,ImportAssetOptions.ForceSynchronousImport);
+    var importer=AssetImporter.GetAtPath(path) as TextureImporter;
+    if(importer==null)throw new System.Exception("TextureImporter missing: "+path);
+    bool changed=importer.textureType!=TextureImporterType.Default||importer.textureShape!=TextureImporterShape.Texture2D||importer.mipmapEnabled||importer.maxTextureSize!=2048||importer.npotScale!=TextureImporterNPOTScale.None||!importer.sRGBTexture||importer.wrapMode!=TextureWrapMode.Clamp||importer.filterMode!=FilterMode.Bilinear||!importer.alphaIsTransparency;
+    if(changed){importer.textureType=TextureImporterType.Default;importer.textureShape=TextureImporterShape.Texture2D;importer.mipmapEnabled=false;importer.maxTextureSize=2048;importer.npotScale=TextureImporterNPOTScale.None;importer.sRGBTexture=true;importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=FilterMode.Bilinear;importer.alphaIsTransparency=true;importer.SaveAndReimport();}
+   }
+  }
+
  }
  public static class Build {
   public static void Android(){ProjectSetup.Ensure();PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android,ScriptingImplementation.IL2CPP);PlayerSettings.Android.targetArchitectures=AndroidArchitecture.ARM64;PlayerSettings.Android.targetSdkVersion=(AndroidSdkVersions)36;EditorUserBuildSettings.buildAppBundle=false;Directory.CreateDirectory("Builds");var report=BuildPipeline.BuildPlayer(new[]{"Assets/Scenes/Main.unity"},"Builds/ONE_SHOT.apk",BuildTarget.Android,BuildOptions.Development);if(report.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)throw new System.Exception("Android build failed");}

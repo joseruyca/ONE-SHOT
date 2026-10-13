@@ -5,7 +5,7 @@ namespace OneShot.Client {
   public string Kind;public ArtTheme Theme;public GameConfig Config;public int Elapsed,Position,Cut=-1,FeedbackAt=-1000;public bool Stopped,Hit,Dragging;public Vector2 StrokeStart,StrokeEnd;
   public ToyCanvas(){generateVisualContent+=Draw;style.backgroundColor=Color.white;style.borderTopLeftRadius=32;style.borderTopRightRadius=32;style.borderBottomLeftRadius=32;style.borderBottomRightRadius=32;style.marginTop=12;style.marginBottom=12;}
   static void TextureQuad(MeshGenerationContext context,Rect r,Texture2D texture,Rect? sample=null){
-   var mesh=context.Allocate(4,6,texture);var atlas=mesh.uvRegion;var region=sample??new Rect(0,0,1,1);var uv=new Rect(atlas.x+region.x*atlas.width,atlas.y+region.y*atlas.height,region.width*atlas.width,region.height*atlas.height);
+   var mesh=context.Allocate(4,6,texture);var uv=sample??new Rect(0,0,1,1);
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMin,r.yMin,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMin,uv.yMax)});
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMax,r.yMin,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMax,uv.yMax)});
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMax,r.yMax,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMax,uv.yMin)});
