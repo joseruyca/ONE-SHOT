@@ -10,7 +10,7 @@ namespace OneShot.Editor {
    ProjectSetup.Ensure();AssetDatabase.Refresh();
    if(EditorUtility.scriptCompilationFailed)throw new Exception("Unity script compilation failed.");
    if(Resources.Load<StyleSheet>("Studio/Studio")==null)throw new Exception("Studio stylesheet missing.");
-   if(Resources.Load<Texture2D>("Studio/Hero")==null||Resources.Load<Texture2D>("Studio/Toys")==null)throw new Exception("Studio artwork missing.");
+   if(Resources.Load<Texture2D>("Studio/HeroWide")==null||Resources.Load<Texture2D>("Studio/Toys")==null)throw new Exception("Studio artwork missing.");
    if(Resources.Load<TextAsset>("Copy")==null)throw new Exception("Bilingual copy missing.");
    if(!File.Exists("Assets/Scenes/Main.unity"))throw new Exception("Main scene missing.");
    var backend=Resources.Load<OneShot.Client.BackendConfiguration>("OneShotBackend");if(backend==null||!backend.IsConfigured)throw new Exception("Backend configuration missing.");
