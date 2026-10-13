@@ -38,9 +38,9 @@ namespace OneShot.Client {
    if(Kind=="slice"){
     if(Cut>=0&&(Theme.bread!=null||Theme.spriteAtlas!=null)){
      float fraction=Mathf.Clamp(Cut/10000f,.001f,.999f),ww=w*.7f,hh=h*.36f;
-     var texture=Theme.bread!=null?Theme.bread:Theme.spriteAtlas;float sampleWidth=Theme.bread!=null?1:1f/3;
-     TextureQuad(context,new Rect(w*.15f-7,h*.32f-hh*.22f,ww*fraction,hh*1.44f),texture,new Rect(0,0,sampleWidth*fraction,1));
-     TextureQuad(context,new Rect(w*.15f+ww*fraction+7,h*.32f-hh*.22f,ww*(1-fraction),hh*1.44f),texture,new Rect(sampleWidth*fraction,0,sampleWidth*(1-fraction),1));
+     var texture=Theme.bread!=null?Theme.bread:Theme.spriteAtlas;float sampleWidth=Theme.bread!=null?1:1f/3;float stretch=Theme.bread!=null?1:1.44f,lift=Theme.bread!=null?0:hh*.22f;
+     TextureQuad(context,new Rect(w*.15f-7,h*.32f-lift,ww*fraction,hh*stretch),texture,new Rect(0,0,sampleWidth*fraction,1));
+     TextureQuad(context,new Rect(w*.15f+ww*fraction+7,h*.32f-lift,ww*(1-fraction),hh*stretch),texture,new Rect(sampleWidth*fraction,0,sampleWidth*(1-fraction),1));
     }else Bread(w*.15f,h*.32f,w*.7f,h*.36f);
     if(Dragging){Line(StrokeStart.x,StrokeStart.y,StrokeEnd.x,StrokeEnd.y,new Color(1,1,1,.9f),6);Circle(StrokeEnd.x,StrokeEnd.y,8,Theme.accent);}
     if(Cut>=0){float x=w*(.15f+.7f*Cut/10000f);Line(x,h*.30f,x,h*.70f,Color.white,9);Line(x+3,h*.30f,x+3,h*.70f,Theme.ink,2);}

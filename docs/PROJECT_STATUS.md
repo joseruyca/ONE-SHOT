@@ -22,7 +22,7 @@ Competición: servidor calcula las puntuaciones desde evidencias; inicio/envío 
 
 Arte inspeccionado: Hero 1024×1536 RGB; Toys 2172×724 RGBA con transparencia. No son capturas de la interfaz corriendo en Unity.
 
-CI verde: https://github.com/joseruyca/ONE-SHOT/actions/runs/38374869076 (1d388d2c300ad4b0c00ad0976254c7d8d9dbb5b0). Backend, núcleo C# y sintaxis de fuentes Unity pasan.
+CI verde de la recuperación: https://github.com/joseruyca/ONE-SHOT/actions/runs/38386293959 (6e809eb8fb033f20858b2e3cee8cc0f7d3be3ca5). Backend, núcleo C# y sintaxis de fuentes Unity pasan.
 
 La comprobación `ONE SHOT/Validate project` o `-executeMethod OneShot.Editor.Validation.Check` permite comprobar importación real y recursos en el editor instalado. El actualizador Windows ejecuta esa validación antes de abrir el editor. Todavía no ejecutado en este entorno, que carece de Unity y Windows.
 
@@ -36,6 +36,6 @@ No se ha contratado ningún plan, servicio, dominio ni compra. Usar infraestruct
 
 ## Despliegue bloqueado — 2026-10-13
 
-La conexión Supabase permite lectura, pero las escrituras fallan con `McpServerError: Invalid or expired requestState` (dos intentos de apply_migration y uno de execute_sql). Se comprobó después del primer fallo que `oneshot.crews` y `public.os_session_active` no existían. No se desplegó una nueva Edge Function que dependiera de esas tablas inexistentes. El servidor conserva la versión anterior. Por tanto Crews, Runs y borrado de cuenta están implementados y probados en código, pero NO disponibles en el servidor real todavía.
+La conexión Supabase permite lectura, pero las escrituras fallan con `McpServerError: Invalid or expired requestState` (dos intentos con el paquete completo, uno de execute_sql y un intento aislado de Crews/Runs sin modificar permisos de Auth). Se comprobó después del primer fallo que `oneshot.crews` y `public.os_session_active` no existían. No se desplegó una nueva Edge Function que dependiera de esas tablas inexistentes. El servidor conserva la versión anterior. Por tanto Crews, Runs y borrado de cuenta están implementados y probados en código, pero NO disponibles en el servidor real todavía.
 
 No confundir un cierre de sesión Auth del cliente con la comprobación adicional de sesión en el servidor, que también espera despliegue. Scripts SQL preparados en backend/database/sessions.sql y social.sql; módulo account.mjs preparado para desplegar junto al endpoint. Antes de desplegar, resolver el error de escritura, aplicar ambas ampliaciones, verificar fixtures transaccionales, desplegar el endpoint y ejecutar QA autenticado.
