@@ -53,3 +53,5 @@ Validación de desglose server-side recibido en cliente añadida al dominio; pru
 Cliente Unity de esta revisión todavía sin prueba visual/importación. No prometer perfección ni publicación. Crews, account recovery/deletion/export, push, OAuth y competición completa siguen pendientes.
 
 Añadido parser Roslyn de todos los .cs Unity al CI para detectar sintaxis antes de la importación. Este chequeo no valida tipos/API Unity, render ni build móvil.
+
+Validación 0.4.0 completada: backend (17 pruebas), dominio C# y parser de todas las fuentes Unity pasan en https://github.com/joseruyca/ONE-SHOT/actions/runs/38369766003 para c69381f26520e0f6b2cd58710ec3249f9115d067. El parser no valida API Unity ni sustituye importación/build. Registro no probado con correo real; no se ha simulado éxito de Auth.
