@@ -39,3 +39,9 @@ CI tras conectar backend: SUCCESS https://github.com/joseruyca/ONE-SHOT/actions/
 Propietario ha activado Unity Personal en su ordenador y está instalando 6000.3.26f1 + Android/OpenJDK/SDK/NDK. Este entorno del agente sigue sin Unity.
 Script Windows creado para descargar un commit concreto, preservar carpetas existentes, abrir proyecto o generar APK y mostrar log si falla. No ejecutado en Windows todavía.
 Corregidos inputs simultáneos/cancelados, gestos fuera del objeto Slice y tamaños mínimos de controles. Pruebas de geometría añadidas al CI; ejecución completada con éxito en main/develop para 11d28184f8518727ae8ccd1628643727cd005283. Backend y núcleo C# verdes. Script Windows/cliente Unity todavía no ejecutados.
+
+## 0.3.0 — revisión visual a partir de capturas reales
+Usuario ha abierto y jugado el cliente 0.2.1 en Unity; capturas confirman importación previa y muestran interfaz deficiente.
+Añadida cámara de fondo para eliminar aviso No cameras rendering. UI centrada con límite de anchura, tipografía en negrita, tarjetas con objetos reconocibles. Renderer ToyCanvas separado; pan/coche/mosquito dibujados con formas propias y texturas sustituibles. Feedback de puntos por acción añadido.
+Updater Windows crea copia de archivos reemplazados, conserva recursos locales no distribuidos y abre el editor. Requiere cerrar Unity. No ejecutado en Windows aquí.
+Nueva revisión aún pendiente de verificar visualmente en Unity; no se declara APK ni acabado de producción.
