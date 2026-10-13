@@ -4,8 +4,8 @@ namespace OneShot.Client {
  public sealed class ToyCanvas:VisualElement {
   public string Kind;public ArtTheme Theme;public GameConfig Config;public int Elapsed,Position,Cut=-1,FeedbackAt=-1000;public bool Stopped,Hit;
   public ToyCanvas(){generateVisualContent+=Draw;style.backgroundColor=Color.white;style.borderTopLeftRadius=32;style.borderTopRightRadius=32;style.borderBottomLeftRadius=32;style.borderBottomRightRadius=32;style.marginTop=12;style.marginBottom=12;}
-  static void TextureQuad(MeshGenerationContext context,Rect r,Texture2D texture){
-   var mesh=context.Allocate(4,6,texture);var uv=mesh.uvRegion;
+  static void TextureQuad(MeshGenerationContext context,Rect r,Texture2D texture,Rect? sample=null){
+   var mesh=context.Allocate(4,6,texture);var atlas=mesh.uvRegion;var region=sample??new Rect(0,0,1,1);var uv=new Rect(atlas.x+region.x*atlas.width,atlas.y+region.y*atlas.height,region.width*atlas.width,region.height*atlas.height);
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMin,r.yMin,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMin,uv.yMax)});
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMax,r.yMin,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMax,uv.yMax)});
    mesh.SetNextVertex(new Vertex{position=new Vector3(r.xMax,r.yMax,Vertex.nearZ),tint=Color.white,uv=new Vector2(uv.xMax,uv.yMin)});
@@ -19,15 +19,18 @@ namespace OneShot.Client {
    void Line(float x,float y,float xx,float yy,Color c,float thickness){p.strokeColor=c;p.lineWidth=thickness;p.BeginPath();p.MoveTo(new Vector2(x,y));p.LineTo(new Vector2(xx,yy));p.Stroke();}
    void Rounded(float x,float y,float ww,float hh,float radius,Color c){float r=Mathf.Min(radius,Mathf.Min(ww,hh)/2);Box(x+r,y,ww-2*r,hh,c);Box(x,y+r,ww,hh-2*r,c);Circle(x+r,y+r,r,c);Circle(x+ww-r,y+r,r,c);Circle(x+r,y+hh-r,r,c);Circle(x+ww-r,y+hh-r,r,c);}
    void Car(float x,float y,float size){
+    if(Theme.car!=null){TextureQuad(context,new Rect(x-size*.5f,y-size*.5f,size,size),Theme.car);return;}
+    if(Theme.spriteAtlas!=null){TextureQuad(context,new Rect(x-size*.5f,y-size*.5f,size,size),Theme.spriteAtlas,new Rect(1f/3,0,1f/3,1));return;}
     Rounded(x-size*.5f,y-size*.29f,size,size*.64f,size*.12f,new Color(0,0,0,.08f));
     Rounded(x-size*.34f,y-size*.36f,size*.68f,size*.12f,4,Theme.ink);Rounded(x-size*.34f,y+size*.25f,size*.68f,size*.12f,4,Theme.ink);
     Rounded(x-size*.5f,y-size*.28f,size,size*.56f,size*.13f,Theme.ink);Rounded(x-size*.20f,y-size*.22f,size*.51f,size*.44f,size*.08f,Theme.park);
     Rounded(x+size*.33f,y-size*.18f,size*.09f,size*.11f,2,Theme.accent);Rounded(x+size*.33f,y+size*.07f,size*.09f,size*.11f,2,Theme.accent);
     if(Theme.car!=null)TextureQuad(context,new Rect(x-size*.5f,y-size*.3f,size,size*.6f),Theme.car);
    }
-   void Bread(float x,float y,float ww,float hh){Rounded(x,y+8,ww,hh,24,new Color(0,0,0,.07f));Rounded(x,y,ww,hh,24,Theme.slice);Rounded(x+10,y+10,ww-20,hh-20,18,new Color32(255,226,171,255));for(int i=0;i<9;i++)Circle(x+ww*(.14f+i*.09f),y+hh*(i%2==0?.40f:.60f),ww*.013f,Theme.slice);if(Theme.bread!=null)TextureQuad(context,new Rect(x,y,ww,hh),Theme.bread);}
-   void Bug(float x,float y,float radius){Circle(x-radius*.7f,y-radius*.3f,radius*.75f,Theme.mosquito);Circle(x+radius*.7f,y-radius*.3f,radius*.75f,Theme.mosquito);Line(x,y,x,y+radius,Theme.ink,5);Circle(x,y-radius*.1f,radius*.23f,Theme.ink);Line(x,y+radius*.45f,x-radius*.6f,y+radius,Theme.ink,3);Line(x,y+radius*.45f,x+radius*.6f,y+radius,Theme.ink,3);if(Theme.mosquitoArtwork!=null)TextureQuad(context,new Rect(x-radius,y-radius,radius*2,radius*2),Theme.mosquitoArtwork);}
+   void Bread(float x,float y,float ww,float hh){if(Theme.bread!=null){TextureQuad(context,new Rect(x,y,ww,hh),Theme.bread);return;}if(Theme.spriteAtlas!=null){TextureQuad(context,new Rect(x,y-hh*.22f,ww,hh*1.44f),Theme.spriteAtlas,new Rect(0,0,1f/3,1));return;}Rounded(x,y+8,ww,hh,24,new Color(0,0,0,.07f));Rounded(x,y,ww,hh,24,Theme.slice);Rounded(x+10,y+10,ww-20,hh-20,18,new Color32(255,226,171,255));for(int i=0;i<9;i++)Circle(x+ww*(.14f+i*.09f),y+hh*(i%2==0?.40f:.60f),ww*.013f,Theme.slice);if(Theme.bread!=null)TextureQuad(context,new Rect(x,y,ww,hh),Theme.bread);}
+   void Bug(float x,float y,float radius){if(Theme.mosquitoArtwork!=null){TextureQuad(context,new Rect(x-radius,y-radius,radius*2,radius*2),Theme.mosquitoArtwork);return;}if(Theme.spriteAtlas!=null){TextureQuad(context,new Rect(x-radius,y-radius,radius*2,radius*2),Theme.spriteAtlas,new Rect(2f/3,0,1f/3,1));return;}Circle(x-radius*.7f,y-radius*.3f,radius*.75f,Theme.mosquito);Circle(x+radius*.7f,y-radius*.3f,radius*.75f,Theme.mosquito);Line(x,y,x,y+radius,Theme.ink,5);Circle(x,y-radius*.1f,radius*.23f,Theme.ink);Line(x,y+radius*.45f,x-radius*.6f,y+radius,Theme.ink,3);Line(x,y+radius*.45f,x+radius*.6f,y+radius,Theme.ink,3);if(Theme.mosquitoArtwork!=null)TextureQuad(context,new Rect(x-radius,y-radius,radius*2,radius*2),Theme.mosquitoArtwork);}
    if(Kind=="collection"){
+    if(Theme.hero!=null){TextureQuad(context,new Rect(0,0,w,h),Theme.hero);return;}
     Circle(w*.25f,h*.34f,w*.18f,new Color32(254,229,211,255));Bread(w*.08f,h*.23f,w*.36f,h*.22f);
     Circle(w*.70f,h*.35f,w*.19f,new Color32(223,236,230,255));Car(w*.70f,h*.35f,w*.27f);
     Circle(w*.48f,h*.74f,w*.15f,new Color32(231,224,250,255));Bug(w*.48f,h*.74f,w*.07f);return;
@@ -40,7 +43,7 @@ namespace OneShot.Client {
     Rounded(left-12,h*.30f,lane+24,h*.40f,20,new Color32(217,230,223,255));
     for(int i=0;i<5;i++)Line(left+lane*i/5,h*.33f,left+lane*i/5+lane*.05f,h*.33f,Color.white,3);
     Rounded(target-26,h*.39f,52,h*.22f,8,new Color(1,1,1,.65f));Line(target,h*.38f,target,h*.62f,Theme.ink,3);
-    Car(left+lane*Mathf.Min(Position,11000)/10000f,h*.5f,64);
+    Car(left+lane*Mathf.Min(Position,11000)/10000f,h*.5f,92);
    }else if(Config?.windows!=null){
     Rounded(w*.08f,h*.12f,w*.84f,h*.76f,24,new Color(1,1,1,.38f));
     foreach(var window in Config.windows)if(Elapsed>=window.start&&Elapsed<=window.end)Bug(w*window.x/10000f,h*window.y/10000f,Mathf.Min(w,h)*.08f);

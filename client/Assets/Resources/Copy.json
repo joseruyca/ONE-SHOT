@@ -399,6 +399,291 @@
       "key": "account_unavailable",
       "es": "No se ha podido completar. Comprueba los datos o vuelve a intentarlo más tarde.",
       "en": "Could not complete the request. Check your details or try again later."
+    },
+    {
+      "key": "studio_headline",
+      "es": "Pequeños retos.\nGrandes piques.",
+      "en": "Small challenges.\nBig rematches."
+    },
+    {
+      "key": "studio_subtitle",
+      "es": "Un minuto para poner a prueba tu precisión.",
+      "en": "One minute to test your precision."
+    },
+    {
+      "key": "studio_practice",
+      "es": "Explorar las pruebas →",
+      "en": "Explore the challenges →"
+    },
+    {
+      "key": "guide_rules",
+      "es": "3 rondas · 5 segundos por ronda · hasta 10.000 puntos",
+      "en": "3 trials · 5 seconds each · up to 10,000 points"
+    },
+    {
+      "key": "slice_trait",
+      "es": "PRECISIÓN · DESLIZA",
+      "en": "PRECISION · SWIPE"
+    },
+    {
+      "key": "park_trait",
+      "es": "CONTROL · FRENA",
+      "en": "CONTROL · BRAKE"
+    },
+    {
+      "key": "mosquito_trait",
+      "es": "REFLEJOS · TOCA",
+      "en": "REFLEXES · TAP"
+    },
+    {
+      "key": "history_title",
+      "es": "Historial de práctica",
+      "en": "Practice history"
+    },
+    {
+      "key": "history_empty",
+      "es": "Tu primera marca empieza con una práctica.",
+      "en": "Your first result starts with a practice session."
+    },
+    {
+      "key": "history_note",
+      "es": "Últimas 50 sesiones guardadas en este dispositivo.",
+      "en": "Last 50 sessions saved on this device."
+    },
+    {
+      "key": "settings_language",
+      "es": "Cambiar a English",
+      "en": "Switch to Español"
+    },
+    {
+      "key": "reset_practice",
+      "es": "Borrar mis marcas locales",
+      "en": "Clear my local practice data"
+    },
+    {
+      "key": "reset_title",
+      "es": "¿Borrar tus prácticas?",
+      "en": "Clear your practice data?"
+    },
+    {
+      "key": "reset_note",
+      "es": "Se borrarán las marcas y el historial de este dispositivo. Esta acción no se puede deshacer.",
+      "en": "Best results and history on this device will be removed. This cannot be undone."
+    },
+    {
+      "key": "confirm_delete",
+      "es": "Borrar prácticas",
+      "en": "Clear practice data"
+    },
+    {
+      "key": "cancel",
+      "es": "Cancelar",
+      "en": "Cancel"
+    },
+    {
+      "key": "quit_title",
+      "es": "¿Salir de la partida?",
+      "en": "Leave the game?"
+    },
+    {
+      "key": "quit_practice",
+      "es": "Esta práctica no se guardará. Puedes volver a empezar cuando quieras.",
+      "en": "This practice will not be saved. You can start again anytime."
+    },
+    {
+      "key": "quit_daily",
+      "es": "El intento ya está consumido. Salir no permite repetirlo.",
+      "en": "Your attempt has already been consumed. Leaving does not let you retry."
+    },
+    {
+      "key": "quit_confirm",
+      "es": "Salir de la partida",
+      "en": "Leave game"
+    },
+    {
+      "key": "continue_game",
+      "es": "Seguir jugando",
+      "en": "Keep playing"
+    },
+    {
+      "key": "local_label",
+      "es": "EN ESTE DISPOSITIVO",
+      "en": "ON THIS DEVICE"
+    },
+    {
+      "key": "history_clear_failed",
+      "es": "No se ha podido borrar el historial. Inténtalo de nuevo.",
+      "en": "History could not be cleared. Please try again."
+    },
+    {
+      "key": "delete_account",
+      "es": "Eliminar mi cuenta",
+      "en": "Delete my account"
+    },
+    {
+      "key": "delete_account_title",
+      "es": "Tu cuenta, tu decisión.",
+      "en": "Your account, your choice."
+    },
+    {
+      "key": "delete_account_note",
+      "es": "Se eliminarán tu cuenta y tus resultados competitivos. Vuelve a identificarte para confirmar. No se puede deshacer.",
+      "en": "Your account and competitive results will be deleted. Sign in again to confirm. This cannot be undone."
+    },
+    {
+      "key": "delete_account_type",
+      "es": "Escribe BORRAR para confirmar",
+      "en": "Type BORRAR to confirm"
+    },
+    {
+      "key": "delete_local_too",
+      "es": "Borrar también mis prácticas de este dispositivo",
+      "en": "Also clear practice data on this device"
+    },
+    {
+      "key": "delete_account_done",
+      "es": "Cuenta eliminada",
+      "en": "Account deleted"
+    },
+    {
+      "key": "delete_account_done_note",
+      "es": "Puedes seguir practicando sin cuenta.",
+      "en": "You can keep practicing without an account."
+    },
+    {
+      "key": "nav_crews",
+      "es": "Crews",
+      "en": "Crews"
+    },
+    {
+      "key": "crews_note",
+      "es": "El mismo reto. Tu gente. Grupos privados para compartir la competición.",
+      "en": "Same challenge. Your people. Private groups to share the competition."
+    },
+    {
+      "key": "crews_empty",
+      "es": "Tu grupo empieza aquí.",
+      "en": "Your group starts here."
+    },
+    {
+      "key": "crews_create",
+      "es": "Crear un Crew",
+      "en": "Create a Crew"
+    },
+    {
+      "key": "crews_join",
+      "es": "Unirme con un código",
+      "en": "Join with a code"
+    },
+    {
+      "key": "crew_limits",
+      "es": "Hasta 3 grupos por persona y 32 miembros por grupo. Usa letras, números, espacios o ._- para los nombres.",
+      "en": "Up to 3 groups per person and 32 members per group. Names accept letters, numbers, spaces or ._-"
+    },
+    {
+      "key": "crew_name",
+      "es": "Nombre del grupo · 3–30 caracteres",
+      "en": "Group name · 3–30 characters"
+    },
+    {
+      "key": "crew_code",
+      "es": "Código de invitación",
+      "en": "Invitation code"
+    },
+    {
+      "key": "crew_nickname",
+      "es": "Tu nombre en el grupo · 2–20 caracteres",
+      "en": "Your name in the group · 2–20 characters"
+    },
+    {
+      "key": "crew_failed",
+      "es": "No se ha podido completar. Revisa el código, los nombres o el límite de grupos.",
+      "en": "Could not complete the request. Check your code, names or group limit."
+    },
+    {
+      "key": "crew_private",
+      "es": "GRUPO PRIVADO",
+      "en": "PRIVATE GROUP"
+    },
+    {
+      "key": "crew_copy",
+      "es": "Copiar código de invitación",
+      "en": "Copy invitation code"
+    },
+    {
+      "key": "crew_invite_note",
+      "es": "Comparte este código solo con las personas que quieras invitar.",
+      "en": "Share this code only with people you want to invite."
+    },
+    {
+      "key": "crew_standings",
+      "es": "El Shot de hoy",
+      "en": "Today’s Shot"
+    },
+    {
+      "key": "crew_complete_first",
+      "es": "Completa el Shot de hoy para ver la clasificación. Si ya lo has hecho, vuelve a intentarlo cuando tengas conexión.",
+      "en": "Complete today’s Shot to see the standings. If you already have, try again when connected."
+    },
+    {
+      "key": "crew_delete",
+      "es": "Eliminar el grupo",
+      "en": "Delete group"
+    },
+    {
+      "key": "crew_leave",
+      "es": "Salir del grupo",
+      "en": "Leave group"
+    },
+    {
+      "key": "crew_delete_note",
+      "es": "El grupo desaparecerá para todos sus miembros. Los resultados individuales se conservan.",
+      "en": "The group will disappear for all members. Individual results are kept."
+    },
+    {
+      "key": "crew_leave_note",
+      "es": "Dejarás de ver la clasificación del grupo. Tus resultados individuales se conservan.",
+      "en": "You will no longer see group standings. Your individual results are kept."
+    },
+    {
+      "key": "crew_confirm",
+      "es": "Confirmar",
+      "en": "Confirm"
+    },
+    {
+      "key": "you",
+      "es": "TÚ",
+      "en": "YOU"
+    },
+    {
+      "key": "run_title",
+      "es": "Mi Run",
+      "en": "My Run"
+    },
+    {
+      "key": "run_note",
+      "es": "Catorce días. Cuentan tus diez mejores marcas diarias verificadas.",
+      "en": "Fourteen days. Your ten best verified daily results count."
+    },
+    {
+      "key": "run_days",
+      "es": "DÍAS JUGADOS",
+      "en": "DAYS PLAYED"
+    },
+    {
+      "key": "run_qualified",
+      "es": "Ya tienes diez días para entrar en la clasificación.",
+      "en": "You have ten days to qualify for the standings."
+    },
+    {
+      "key": "run_pending",
+      "es": "Juega al menos diez días de este ciclo para clasificarte.",
+      "en": "Play at least ten days in this cycle to qualify."
+    },
+    {
+      "key": "run_provisional",
+      "es": "CLASIFICACIÓN PROVISIONAL",
+      "en": "PROVISIONAL STANDINGS"
     }
   ]
 }

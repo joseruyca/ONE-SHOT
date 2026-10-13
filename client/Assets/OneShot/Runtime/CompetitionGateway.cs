@@ -18,11 +18,11 @@ namespace OneShot.Client {
  [Serializable] public sealed class ScoreResponse {public int total;public int[] scores;public string status;}
  [Serializable] public sealed class TodayResponse {public ShotSummary shot;}
  [Serializable] public sealed class ShotSummary {public string shotId,label,endsAt;public int durationMs;}
- [Serializable] public sealed class AuthResponse {public string access_token;}
+ [Serializable] public sealed class AuthResponse {public string access_token,refresh_token;public int expires_in;}
  [Serializable] sealed class Login {public string email,password;}
  [Serializable] public sealed class WorldResponse {public int rank,population;public float topPercent;public bool provisional;}
  public sealed class CompetitionGateway : ICompetitionGateway {
-  readonly MonoBehaviour host;readonly BackendConfiguration configuration;string accessToken;
+  readonly MonoBehaviour host;readonly BackendConfiguration configuration;string accessToken,refreshToken;double tokenDeadline;Task refreshFlight;
   public int[] LastScores { get; private set; }=Array.Empty<int>();
   public bool SignedIn => !string.IsNullOrEmpty(accessToken);
   public CompetitionGateway(MonoBehaviour host,BackendConfiguration configuration){this.host=host;this.configuration=configuration;}
@@ -32,14 +32,17 @@ namespace OneShot.Client {
   async Task Authenticate(string email,string password,CancellationToken cancellation){
    string json=await Request("/auth/v1/token?grant_type=password",JsonUtility.ToJson(new Login{email=email,password=password}),false,cancellation);
    var response=JsonUtility.FromJson<AuthResponse>(json);
-   if(string.IsNullOrEmpty(response?.access_token))throw new InvalidOperationException("Authentication failed");accessToken=response.access_token;
+   if(string.IsNullOrEmpty(response?.access_token))throw new InvalidOperationException("Authentication failed");AcceptSession(response);
   }
   public async Task<bool> Register(string email,string password,CancellationToken cancellation){
    string json=await Request("/auth/v1/signup",JsonUtility.ToJson(new Login{email=email,password=password}),false,cancellation);
    var response=JsonUtility.FromJson<AuthResponse>(json);
-   if(!string.IsNullOrEmpty(response?.access_token)){accessToken=response.access_token;return true;}return false;
+   if(!string.IsNullOrEmpty(response?.access_token)){AcceptSession(response);return true;}return false;
   }
-  public void SignOut(){accessToken=null;LastScores=Array.Empty<int>();}
+  public async Task SignOutRemote(CancellationToken cancellation){await Request("/auth/v1/logout?scope=local","{}",true,cancellation);SignOut();}
+  public async Task DeleteAccount(CancellationToken cancellation){await Request("/functions/v1/competition","{\"action\":\"delete_account\",\"confirmation\":\"DELETE_MY_ACCOUNT\"}",true,cancellation);SignOut();}
+  void AcceptSession(AuthResponse response){accessToken=response.access_token;refreshToken=response.refresh_token;tokenDeadline=Time.realtimeSinceStartupAsDouble+Math.Max(60,response.expires_in)-30;}
+  public void SignOut(){accessToken=null;refreshToken=null;tokenDeadline=0;LastScores=Array.Empty<int>();}
   public async Task<ShotSummary> Today(CancellationToken c){return JsonUtility.FromJson<TodayResponse>(await Request("/functions/v1/competition","{\"action\":\"today\"}",true,c)).shot;}
   public async Task<WorldResponse> World(string shot,CancellationToken c){return JsonUtility.FromJson<WorldResponse>(await Request("/functions/v1/competition","{\"action\":\"world\",\"shotId\":\""+Guid.Parse(shot)+"\"}",true,c));}
   public async Task<Attempt> StartAsync(string shotId,string idempotencyKey,CancellationToken c){
@@ -57,8 +60,21 @@ namespace OneShot.Client {
    if(r==null||r.status!="completed")throw new InvalidOperationException("Result not verified");
    ResultValidation.Validate(r.total,r.scores);LastScores=(int[])r.scores.Clone();return new VerifiedResult(r.total);
   }
+  public Task<string> Social(SocialRequest data,CancellationToken c)=>Request("/functions/v1/competition",JsonUtility.ToJson(data),true,c);
+  public async Task<CrewInfo[]> GetCrews(CancellationToken c){var data=JsonUtility.FromJson<CrewList>(await Social(new SocialRequest{action="crews"},c));return data?.crews??Array.Empty<CrewInfo>();}
+  public async Task<CrewResult[]> GetCrewResults(string crew,string shot,CancellationToken c){var data=JsonUtility.FromJson<CrewResults>(await Social(new SocialRequest{action="crew_result",crewId=Guid.Parse(crew).ToString(),shotId=Guid.Parse(shot).ToString()},c));return data?.results??Array.Empty<CrewResult>();}
+  public async Task<RunResult> GetRun(CancellationToken c){return JsonUtility.FromJson<RunResult>(await Social(new SocialRequest{action="run"},c));}
   static string JsonString(string value){return "\""+value.Replace("\\","\\\\").Replace("\"","\\\"")+"\"";}
-  Task<string> Request(string path,string body,bool authenticated,CancellationToken c){
+  async Task<string> Request(string path,string body,bool authenticated,CancellationToken c){
+   if(authenticated&&SignedIn&&Time.realtimeSinceStartupAsDouble>=tokenDeadline){if(refreshFlight==null)refreshFlight=Refresh(c);try{await refreshFlight;}finally{refreshFlight=null;}}
+   return await RawRequest(path,body,authenticated,c);
+  }
+  async Task Refresh(CancellationToken c){
+   if(string.IsNullOrEmpty(refreshToken)){SignOut();throw new InvalidOperationException("Sign in required");}
+   var json=await RawRequest("/auth/v1/token?grant_type=refresh_token","{\"refresh_token\":"+JsonString(refreshToken)+"}",false,c);var response=JsonUtility.FromJson<AuthResponse>(json);
+   if(string.IsNullOrEmpty(response?.access_token)||string.IsNullOrEmpty(response.refresh_token)){SignOut();throw new InvalidOperationException("Sign in required");}AcceptSession(response);
+  }
+  Task<string> RawRequest(string path,string body,bool authenticated,CancellationToken c){
    if(!configuration.IsConfigured)throw new InvalidOperationException("Backend not provisioned");
    if(authenticated&&!SignedIn)throw new InvalidOperationException("Sign in required");
    var completion=new TaskCompletionSource<string>();host.StartCoroutine(Send(path,body,authenticated,c,completion));return completion.Task;

@@ -1,5 +1,6 @@
 // Deploy only after live Auth/RLS/advisors and anti-abuse checks. No external dependencies.
 import { evaluateShot } from '../../core/scoring.mjs';
+import { deleteOwnAccount, hasRecentPassword } from './account.mjs';
 const base=Deno.env.get('SUPABASE_URL');
 const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -17,11 +18,27 @@ Deno.serve(async(req:Request)=>{
   const identity=await fetch(`${base}/auth/v1/user`,{headers:{apikey:key,Authorization:auth},signal:AbortSignal.timeout(10000)});
   if(!identity.ok)return reply(401,{error:'invalid_session'});
   const user=await identity.json();if(!uuid.test(user.id))return reply(401,{error:'invalid_session'});
+  // Decode only AFTER Auth has verified this token; never authorize from body claims.
+  const token=auth.slice(7).split('.');if(token.length!==3)return reply(401,{error:'invalid_session'});
+  const encoded=token[1].replace(/-/g,'+').replace(/_/g,'/');
+  const claims=JSON.parse(atob(encoded.padEnd(Math.ceil(encoded.length/4)*4,'=')));
+  if(claims.sub!==user.id||!uuid.test(claims.session_id)||!await rpc('os_session_active',{p_user:user.id,p_session:claims.session_id}))return reply(401,{error:'invalid_session'});
   const reader=req.body?.getReader();if(!reader)return reply(400,{error:'invalid_body'});
   const chunks:Uint8Array[]=[];let size=0;
   while(true){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;if(size>65536){await reader.cancel();return reply(413,{error:'payload_too_large'});}chunks.push(value);}
   const bytes=new Uint8Array(size);let offset=0;for(const part of chunks){bytes.set(part,offset);offset+=part.length;}
   const body=JSON.parse(new TextDecoder().decode(bytes));
+  if(body.action==='delete_account'&&body.confirmation==='DELETE_MY_ACCOUNT'){
+   if(!hasRecentPassword(claims))return reply(403,{error:'reauthentication_required'});
+   return reply(200,await deleteOwnAccount(base,key,auth,user.id));
+  }
+  if(['crew_create','crew_join'].includes(body.action))await rpc('os_social_budget',{p_user:user.id});
+  if(body.action==='crews')return reply(200,await rpc('os_crews',{p_user:user.id}));
+  if(body.action==='run')return reply(200,await rpc('os_run',{p_user:user.id}));
+  if(body.action==='crew_create'&&typeof body.name==='string'&&typeof body.nickname==='string')return reply(200,await rpc('os_crew_create',{p_user:user.id,p_name:body.name.trim(),p_nickname:body.nickname.trim()}));
+  if(body.action==='crew_join'&&typeof body.code==='string'&&typeof body.nickname==='string')return reply(200,await rpc('os_crew_join',{p_user:user.id,p_code:body.code.trim().toUpperCase(),p_nickname:body.nickname.trim()}));
+  if(body.action==='crew_remove'&&uuid.test(body.crewId)&&typeof body.deleteCrew==='boolean')return reply(200,await rpc('os_crew_remove',{p_user:user.id,p_crew:body.crewId,p_delete:body.deleteCrew}));
+  if(body.action==='crew_result'&&uuid.test(body.crewId)&&uuid.test(body.shotId))return reply(200,await rpc('os_crew_result',{p_user:user.id,p_crew:body.crewId,p_shot:body.shotId}));
   if(body.action==='today')return reply(200,{shot:await rpc('os_today',{})});
   if(body.action==='start'&&uuid.test(body.shotId)&&uuid.test(body.startKey))return reply(200,await rpc('os_start',{p_user:user.id,p_shot:body.shotId,p_key:body.startKey}));
   if(body.action==='world'&&uuid.test(body.shotId))return reply(200,await rpc('os_world',{p_user:user.id,p_shot:body.shotId}));
