@@ -43,3 +43,5 @@ No confundir un cierre de sesión Auth del cliente con la comprobación adiciona
 ## Corrección de importación — 2026-10-13
 
 El propietario ejecutó el actualizador y Unity rechazó com.unity.modules.inputlegacy@1.0.0, que no es un paquete disponible. Se elimina esa dependencia errónea y el sondeo de UnityEngine.Input.GetKeyDown. Cancelar/Atrás se maneja mediante NavigationCancelEvent de UI Toolkit, con foco en el contenedor persistente de la interfaz. La comprobación de importación detuvo correctamente la apertura en lugar de anunciar éxito. Nueva importación en el Unity del propietario pendiente.
+
+El segundo log de importación identifica cuatro CS0029 (Color32 a StyleColor) en AppScreens, OneShotApp, SocialScreens y StudioScreens. Se convierte explícitamente Color32 a Color antes de asignarlo al estilo; se corrigen también las ramas de los operadores condicionales para que su tipo sea Color. Son errores de tipos de la API Unity que el parser de sintaxis de CI no podía detectar. Nueva importación real pendiente.

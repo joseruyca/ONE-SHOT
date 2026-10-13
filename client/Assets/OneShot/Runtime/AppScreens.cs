@@ -13,7 +13,7 @@ namespace OneShot.Client {
   void Navigation(string selected){
    var bar=new VisualElement();bar.style.flexDirection=FlexDirection.Row;bar.AddToClassList("navigation");bar.style.marginTop=8;bar.style.justifyContent=Justify.SpaceBetween;
    var titles=new[]{"nav_today","nav_train","nav_crews","nav_profile"};var actions=new Action[]{Home,TrainingHub,Crews,Profile};var ids=new[]{"today","train","crews","profile"};
-   for(int i=0;i<4;i++){var action=actions[i];var b=new Button(()=>{if(!busy)action();}){text=L(titles[i])};b.style.fontSize=17;b.style.height=52;b.style.flexGrow=1;b.style.color=art.ink;b.style.backgroundColor=ids[i]==selected?new Color32(255,231,185,255):Color.clear;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.borderLeftWidth=0;b.style.borderRightWidth=0;bar.Add(b);}shell.Add(bar);
+   for(int i=0;i<4;i++){var action=actions[i];var b=new Button(()=>{if(!busy)action();}){text=L(titles[i])};b.style.fontSize=17;b.style.height=52;b.style.flexGrow=1;b.style.color=art.ink;b.style.backgroundColor=ids[i]==selected?(Color)new Color32(255,231,185,255):Color.clear;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.borderLeftWidth=0;b.style.borderRightWidth=0;bar.Add(b);}shell.Add(bar);
   }
   void TrainingHub(){ResetCancellation();Clear();busy=false;Header("train");Text(L("training_title"),48);Text(L("training_note"),21);
    foreach(var game in new[]{"slice","park","mosquito"}){var selected=game;GameCard(game,()=>Guide(selected));}

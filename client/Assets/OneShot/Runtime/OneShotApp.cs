@@ -17,7 +17,7 @@ namespace OneShot.Client {
    if(UnityEngine.Object.FindFirstObjectByType<OneShotApp>()==null)new GameObject("ONE SHOT").AddComponent<OneShotApp>();
   }
   void Start(){
-   if(Camera.main==null){var cameraObject=new GameObject("ONE SHOT Camera");var camera=cameraObject.AddComponent<Camera>();cameraObject.tag="MainCamera";camera.clearFlags=CameraClearFlags.SolidColor;camera.cullingMask=0;camera.backgroundColor=new Color32(247,249,246,255);}
+   if(Camera.main==null){var cameraObject=new GameObject("ONE SHOT Camera");var camera=cameraObject.AddComponent<Camera>();cameraObject.tag="MainCamera";camera.clearFlags=CameraClearFlags.SolidColor;camera.cullingMask=0;camera.backgroundColor=(Color)new Color32(247,249,246,255);}
    if(UnityEngine.Object.FindFirstObjectByType<AudioListener>()==null&&Camera.main!=null)Camera.main.gameObject.AddComponent<AudioListener>();
    copy=new Localizer(Spanish);Application.targetFrameRate=60;Screen.orientation=ScreenOrientation.Portrait;
    art=Resources.Load<ArtTheme>("OneShotArt")??ScriptableObject.CreateInstance<ArtTheme>();
@@ -39,7 +39,7 @@ namespace OneShot.Client {
   void Clear(){shell.Clear();var scroll=new ScrollView(ScrollViewMode.Vertical);scroll.style.flexGrow=1;scroll.horizontalScrollerVisibility=ScrollerVisibility.Hidden;scroll.verticalScrollerVisibility=ScrollerVisibility.Hidden;shell.Add(scroll);root=new VisualElement();root.style.width=Length.Percent(100);root.AddToClassList("page");scroll.Add(root);shell.Focus();}
   Label Text(string text,int size=24){var l=new Label(text);l.AddToClassList("copy");l.style.fontSize=size;if(size>=28)l.style.unityFontStyleAndWeight=FontStyle.Bold;l.style.color=art.ink;l.style.whiteSpace=WhiteSpace.Normal;l.style.marginBottom=12;root.Add(l);return l;}
   Button Button(string title,Action action,bool primary=false){var b=new Button(()=>{if(!busy)action();}){text=title};b.AddToClassList("action");b.style.height=72;b.style.minHeight=64;b.style.flexShrink=0;b.style.marginTop=14;b.style.fontSize=24;b.style.unityFontStyleAndWeight=FontStyle.Bold;
-   b.style.borderLeftWidth=0;b.style.borderRightWidth=0;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.backgroundColor=primary?new Color32(40,78,207,255):Color.white;b.style.color=primary?Color.white:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
+   b.style.borderLeftWidth=0;b.style.borderRightWidth=0;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.backgroundColor=primary?(Color)new Color32(40,78,207,255):Color.white;b.style.color=primary?Color.white:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
   void Spacer(){var s=new VisualElement();s.style.flexGrow=1;root.Add(s);}
   void Home(){ResetCancellation();Clear();busy=false;Header("today");
    Text(L("studio_headline"),54);Text(L("studio_subtitle"),21);

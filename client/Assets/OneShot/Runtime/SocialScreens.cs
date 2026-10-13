@@ -28,7 +28,7 @@ namespace OneShot.Client {
    if(busy)return;Clear();Header("crews");Text(crew.name,44);Text(crew.members+" / 32 · "+L("crew_private"),20);
    if(crew.owner&&!string.IsNullOrEmpty(crew.code)){Text(L("crew_code"),18);Text(crew.code,28);Button(L("crew_copy"),()=>{GUIUtility.systemCopyBuffer=crew.code;});Text(L("crew_invite_note"),18);}
    busy=true;var status=Text(L("account_processing"),20);
-   try{var today=await gateway.Today(lifetime.Token);if(today==null){status.text=L("copy_009");}else{var results=await gateway.GetCrewResults(crew.id,today.shotId,lifetime.Token);status.RemoveFromHierarchy();Text(L("crew_standings"),28);foreach(var result in results){var row=Text(result.rank+"  "+result.nickname+(result.you?" · "+L("you"):"")+"   "+result.total.ToString("N0"),25);if(result.you)row.style.color=new Color32(40,78,207,255);}}}
+   try{var today=await gateway.Today(lifetime.Token);if(today==null){status.text=L("copy_009");}else{var results=await gateway.GetCrewResults(crew.id,today.shotId,lifetime.Token);status.RemoveFromHierarchy();Text(L("crew_standings"),28);foreach(var result in results){var row=Text(result.rank+"  "+result.nickname+(result.you?" · "+L("you"):"")+"   "+result.total.ToString("N0"),25);if(result.you)row.style.color=(Color)new Color32(40,78,207,255);}}}
    catch{status.text=L("crew_complete_first");}finally{busy=false;}
    Button(L(crew.owner?"crew_delete":"crew_leave"),()=>ConfirmCrewRemove(crew));Button(L("copy_014"),Crews);Navigation("crews");
   }
