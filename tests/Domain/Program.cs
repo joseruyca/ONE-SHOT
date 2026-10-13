@@ -21,6 +21,11 @@ class Game : IMicrogame {
  }
  public void Dispose(){Disposed++;}
 }
+class Journal : IAttemptJournal {
+ public PendingAttempt Pending;public bool FailSave,FailClear;public int Saves,Clears;
+ public void Save(PendingAttempt pending){Saves++;if(FailSave)throw new Exception("Disk failure");Pending=pending;}
+ public void Clear(string attemptId){Clears++;if(FailClear)throw new Exception("Disk failure");if(Pending?.Attempt.Id!=attemptId)throw new Exception("Wrong attempt cleared");Pending=null;}
+}
 class Program {
  static void Check(bool condition,string name){if(!condition)throw new Exception(name);Console.WriteLine("PASS "+name);}
  static async Task MustFail(Func<Task> f){bool failed=false;try{await f();}catch{failed=true;}if(!failed)throw new Exception("Expected failure");}
@@ -52,5 +57,20 @@ class Program {
   Check(runner.State==RunnerState.Interrupted&&gateway.Submits==0,"incomplete shot never submitted");
   await MustFail(()=>runner.RunAsync("today","new-key",CancellationToken.None));
   Check(gateway.Starts==1,"interrupted attempt cannot locally restart");
+  var journal=new Journal();gateway=new Gateway{FailSubmit=true};runner=new ShotRunner(gateway,_=>new Game(),journal);
+  await MustFail(()=>runner.RunAsync("today","key",CancellationToken.None));
+  Check(journal.Pending!=null&&journal.Pending.Evidence.Count==3,"complete evidence checkpoint survives failed submit");
+  int before=Game.Played;gateway=new Gateway();var restored=ShotRunner.Restore(gateway,_=>new Game(),journal.Pending,journal);
+  await MustFail(()=>restored.RunAsync("today","other-key",CancellationToken.None));
+  await restored.SubmitAsync(CancellationToken.None);
+  Check(Game.Played==before&&gateway.Starts==0&&gateway.Submits==1,"restored submission cannot replay or start a new attempt");
+  Check(journal.Pending==null&&journal.Clears==1,"checkpoint cleared only after verified acknowledgement");
+  journal=new Journal{FailSave=true};gateway=new Gateway();runner=new ShotRunner(gateway,_=>new Game(),journal);
+  await MustFail(()=>runner.RunAsync("today","key",CancellationToken.None));
+  Check(gateway.Submits==0&&runner.State==RunnerState.PendingSubmission,"failed durable write prevents uncheckpointed submission");
+  journal.FailSave=false;journal.FailClear=true;var accepted=await runner.SubmitAsync(CancellationToken.None);
+  Check(accepted.Total==20000&&runner.State==RunnerState.Completed&&runner.JournalCleanupFailed,"local cleanup failure does not undo verified server result");
+  await MustFail(()=>{new PendingAttempt(journal.Pending.Attempt,new List<RoundEvidence>{new RoundEvidence("[]")});return Task.CompletedTask;});
+  Check(true,"incomplete recovery data is rejected");
  }
 }

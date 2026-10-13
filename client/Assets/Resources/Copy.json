@@ -684,6 +684,41 @@
       "key": "run_provisional",
       "es": "CLASIFICACIÓN PROVISIONAL",
       "en": "PROVISIONAL STANDINGS"
+    },
+    {
+      "key": "pending_title",
+      "es": "Tu resultado está pendiente.",
+      "en": "Your result is pending."
+    },
+    {
+      "key": "pending_note",
+      "es": "Terminaste las pruebas. Conservamos las acciones para reenviar el mismo resultado al servidor, sin repetir la partida.",
+      "en": "You finished the rounds. Your actions were saved to resubmit the same result without replaying the game."
+    },
+    {
+      "key": "pending_discard",
+      "es": "Descartar el envío pendiente",
+      "en": "Discard pending submission"
+    },
+    {
+      "key": "pending_corrupt",
+      "es": "No podemos leer el resultado guardado. No se enviará información incompleta.",
+      "en": "We cannot read the saved result. Incomplete data will not be submitted."
+    },
+    {
+      "key": "pending_discard_note",
+      "es": "Se borrará la copia de este dispositivo. El intento seguirá consumido. Si el servidor ya lo confirmó, ese resultado se conserva.",
+      "en": "The copy on this device will be removed. Your attempt remains consumed. If the server already confirmed it, the result is kept."
+    },
+    {
+      "key": "pending_confirm",
+      "es": "Descartar copia local",
+      "en": "Discard local copy"
+    },
+    {
+      "key": "pending_window_note",
+      "es": "Un envío nuevo debe llegar dentro del plazo del intento. Si el servidor ya lo recibió, podrás recuperar el resultado confirmado.",
+      "en": "A new submission must arrive within the attempt deadline. If the server already received it, you can recover the confirmed result."
     }
   ]
 }

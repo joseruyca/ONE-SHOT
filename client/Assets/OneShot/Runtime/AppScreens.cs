@@ -9,7 +9,7 @@ namespace OneShot.Client {
   FeedbackAudio feedback;
   readonly List<int> practiceScores=new List<int>();
   readonly List<string> completedNames=new List<string>();
-  bool ReducedMotion {get=>PlayerPrefs.GetInt("oneshot.reducedMotion",0)==1;set{PlayerPrefs.SetInt("oneshot.reducedMotion",value?1:0);PlayerPrefs.Save();}}
+  bool ReducedMotion {get=>PlayerPrefs.GetInt("oneshot.reducedMotion",0)==1;set{PlayerPrefs.SetInt("oneshot.reducedMotion",value?1:0);PlayerPrefs.Save();shell?.EnableInClassList("reduced-motion",value);}}
   void Navigation(string selected){
    var bar=new VisualElement();bar.style.flexDirection=FlexDirection.Row;bar.AddToClassList("navigation");bar.style.marginTop=8;bar.style.justifyContent=Justify.SpaceBetween;
    var titles=new[]{"nav_today","nav_train","nav_crews","nav_profile"};var actions=new Action[]{Home,TrainingHub,Crews,Profile};var ids=new[]{"today","train","crews","profile"};

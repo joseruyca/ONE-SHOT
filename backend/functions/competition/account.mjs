@@ -1,6 +1,6 @@
 // Only invoked after Auth verification and live-session validation in index.ts.
 export async function deleteOwnAccount(base,key,jwt,userId,fetcher=fetch){
- if(!/^[0-9a-f-]{36}$/i.test(userId))throw new Error('invalid_identity');
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId))throw new Error('invalid_identity');
  const logout=await fetcher(`${base}/auth/v1/logout?scope=global`,{method:'POST',headers:{apikey:key,Authorization:jwt},signal:AbortSignal.timeout(10000)});
  if(!logout.ok)throw new Error('revocation_failed');
  const deleted=await fetcher(`${base}/auth/v1/admin/users/${userId}`,{method:'DELETE',headers:{apikey:key,Authorization:`Bearer ${key}`},signal:AbortSignal.timeout(10000)});

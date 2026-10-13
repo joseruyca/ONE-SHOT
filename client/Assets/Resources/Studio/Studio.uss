@@ -27,3 +27,5 @@
 TextField { min-height: 70px; margin-top: 10px; }
 TextField > .unity-text-field__input { padding: 16px; border-radius: 12px; background-color: white; color: rgb(29,43,77); }
 Toggle { min-height: 52px; }
+
+.reduced-motion .action:active { scale: 1 1; }

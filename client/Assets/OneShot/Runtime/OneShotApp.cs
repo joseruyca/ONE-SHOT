@@ -31,7 +31,7 @@ namespace OneShot.Client {
    if(art.typography!=null)root.style.unityFontDefinition=FontDefinition.FromFont(art.typography);
    float bottom=Screen.safeArea.y/Screen.height*1000,top=(Screen.height-Screen.safeArea.yMax)/Screen.height*1000;
    shell.style.paddingTop=top+14;shell.style.paddingBottom=bottom+10;
-   gateway=new CompetitionGateway(this,backend);feedback=gameObject.AddComponent<FeedbackAudio>();feedback.Initialize(art);Home();
+   shell.EnableInClassList("reduced-motion",ReducedMotion);gateway=new CompetitionGateway(this,backend);journal=new AttemptJournal(()=>gateway.UserId,()=>dailyId);feedback=gameObject.AddComponent<FeedbackAudio>();feedback.Initialize(art);Home();
   }
   void OnDestroy(){lifetime.Cancel();lifetime.Dispose();gateway?.SignOut();}
   void OnApplicationPause(bool paused){if(paused&&busy)lifetime.Cancel();} // competitive resume not yet implemented
@@ -50,10 +50,11 @@ namespace OneShot.Client {
   async void OpenDaily(){if(busy)return;
    if(!backend.IsConfigured){Notice(L("copy_006"),L("copy_007"));return;}
    if(!gateway.SignedIn){Login(OpenDaily);return;}
+   if(PendingScreen())return;
    busy=true;Clear();Text(L("copy_008"),38);
    try{var s=await gateway.Today(lifetime.Token);if(s==null){Notice(L("copy_009"),L("copy_010"));return;}dailyId=s.shotId;Clear();Text(s.label,52);Text(L("copy_011")+Mathf.RoundToInt(s.durationMs/1000f)+" SEC");Text(L("copy_012"));busy=false;Button(L("copy_013"),PlayDaily,true);Button(L("copy_014"),Home);}catch{Notice(L("copy_015"),L("copy_016"));}finally{busy=false;}
   }
-  async void PlayDaily(){if(busy)return;ResetCancellation();competitiveSession=true;gameRunning=true;busy=true;completedNames.Clear();practiceScores.Clear();runner=new ShotRunner(gateway,name=>new UnityGame(this));
+  async void PlayDaily(){if(busy)return;ResetCancellation();competitiveSession=true;gameRunning=true;busy=true;completedNames.Clear();practiceScores.Clear();runner=new ShotRunner(gateway,name=>new UnityGame(this),journal);
    try{var r=await runner.RunAsync(dailyId,Guid.NewGuid().ToString(),lifetime.Token);ShowResult(r.Total,false);}
    catch{Clear();Text(L("copy_024"),44);Text(L("copy_025"));if(runner.State==RunnerState.PendingSubmission)Button(L("copy_026"),RetrySubmit,true);Button(L("copy_027"),Home);}finally{gameRunning=false;busy=false;}
   }
@@ -81,10 +82,11 @@ namespace OneShot.Client {
     var performance=Text("",24);performance.style.minHeight=32;
     var events=new List<GameEvent>();var hits=new HashSet<int>();bool used=false;int trialScore=0;double start=Time.realtimeSinceStartupAsDouble;Vector2 down=Vector2.zero;
     int activePointer=-1;
-    toy.RegisterCallback<PointerDownEvent>(e=>{if(activePointer!=-1)return;activePointer=e.pointerId;down=e.localPosition;toy.CapturePointer(e.pointerId);});
-    toy.RegisterCallback<PointerCancelEvent>(e=>{if(e.pointerId==activePointer){activePointer=-1;toy.ReleasePointer(e.pointerId);}});
+    toy.RegisterCallback<PointerDownEvent>(e=>{if(activePointer!=-1)return;activePointer=e.pointerId;down=e.localPosition;toy.StrokeStart=down;toy.StrokeEnd=down;toy.Dragging=round.game=="slice"&&!used;toy.CapturePointer(e.pointerId);});
+    toy.RegisterCallback<PointerMoveEvent>(e=>{if(e.pointerId==activePointer&&toy.Dragging){toy.StrokeEnd=e.localPosition;toy.MarkDirtyRepaint();}});
+    toy.RegisterCallback<PointerCancelEvent>(e=>{if(e.pointerId==activePointer){activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);}});
     toy.RegisterCallback<PointerUpEvent>(e=>{
-     if(e.pointerId!=activePointer)return;activePointer=-1;toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
+     if(e.pointerId!=activePointer)return;activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
      int x=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.x/toy.resolvedStyle.width*10000),0,10000),y=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.y/toy.resolvedStyle.height*10000),0,10000);
      if(events.Count>0&&time<=events[events.Count-1].t)return;
      bool positive=false;

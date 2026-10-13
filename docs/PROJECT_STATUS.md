@@ -4,7 +4,7 @@ No hay una build móvil validada ni una versión comercial terminada. La exigenc
 
 ## Implementado
 
-Cliente Unity 6000.3.26f1: práctica de Slice/Park/Mosquito, tres ejercicios por prueba, guías específicas, cuenta atrás, feedback de audio y puntos, resultados y récords locales, historial de 50 sesiones, ES/EN seleccionable, audio y reducción de movimiento, navegación fija y contenido desplazable. Salida con confirmación; abandonar el intento competitivo no lo recupera. Las interrupciones no conservan una partida a medias.
+Cliente Unity 6000.3.26f1: práctica de Slice/Park/Mosquito, tres ejercicios por prueba, guías específicas, cuenta atrás, feedback de audio y puntos, resultados y récords locales, historial de 50 sesiones, ES/EN seleccionable, audio y reducción de movimiento, navegación fija y contenido desplazable. Salida con confirmación; abandonar el intento competitivo no lo recupera. Las interrupciones no conservan una partida a medias. Un resultado completo se guarda atómicamente antes del envío y se puede reenviar después de cerrar la app e identificarse con la misma cuenta. El archivo no incluye contraseña ni tokens; no permite reiniciar ni repetir pruebas. La copia solo se elimina tras confirmación del servidor o descarte explícito, que no devuelve el intento. Persistir el archivo no amplía el plazo del servidor: un submit nuevo fuera de plazo se rechaza; recuperar un submit ya confirmado sigue siendo idempotente.
 
 Dirección Studio Toys: arte original generado, portada editorial y atlas transparente de los tres objetos jugables. Integrados en UI Toolkit; fuentes USS y ArtTheme permiten sustituir arte y paleta sin alterar el sistema de puntuación.
 
@@ -28,7 +28,7 @@ La comprobación `ONE SHOT/Validate project` o `-executeMethod OneShot.Editor.Va
 
 ## Pendiente para producto completo
 
-Importación y verificación visual de esta revisión en Unity; build Android/iOS; flujo autenticado completo desde dispositivo; revisión de gestos, diversión y legibilidad; pruebas de rendimiento/accesibilidad; recuperación duradera de envíos pendientes; OAuth/deep links y almacenamiento seguro de sesión; recuperación de cuenta; exportación de datos; moderación/report/block; política de privacidad y datos legales del responsable; publicación de Shots y operación diaria; push; Pour/Balloon; catálogo/cosméticos; decisiones de Reload y anuncios. No activar monetización ni servicios facturados.
+Importación y verificación visual de esta revisión en Unity; build Android/iOS; flujo autenticado completo desde dispositivo; revisión de gestos, diversión y legibilidad; pruebas de rendimiento/accesibilidad; OAuth/deep links y almacenamiento seguro de sesión; recuperación de cuenta; exportación de datos; moderación/report/block; política de privacidad y datos legales del responsable; publicación de Shots y operación diaria; push; Pour/Balloon; catálogo/cosméticos; decisiones de Reload y anuncios. No activar monetización ni servicios facturados.
 
 ## Restricción económica
 

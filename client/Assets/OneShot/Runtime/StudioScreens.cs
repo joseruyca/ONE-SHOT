@@ -42,7 +42,7 @@ namespace OneShot.Client {
    Button(L("delete_account"),async()=>{
     if(busy)return;if(confirmation.value!="BORRAR"||string.IsNullOrWhiteSpace(email.value)||string.IsNullOrWhiteSpace(password.value)){status.text=L("delete_account_type");return;}
     busy=true;status.text=L("account_processing");
-    try{await gateway.SignIn(email.value.Trim(),password.value,lifetime.Token);password.value="";await gateway.DeleteAccount(lifetime.Token);
+    try{await gateway.SignIn(email.value.Trim(),password.value,lifetime.Token);password.value="";var clearPending=journal.CaptureDiscard();await gateway.DeleteAccount(lifetime.Token);try{clearPending();}catch(System.IO.IOException){Debug.LogWarning("Pending local data could not be cleared.");}catch(System.UnauthorizedAccessException){Debug.LogWarning("Pending local data could not be cleared.");}
      if(local.value){foreach(var game in new[]{"slice","park","mosquito"})PlayerPrefs.DeleteKey("oneshot.practice."+game);PlayerPrefs.Save();PracticeJournal.Clear();}
      Notice(L("delete_account_done"),L("delete_account_done_note"));
     }catch{password.value="";status.text=L("account_unavailable");}finally{busy=false;}
