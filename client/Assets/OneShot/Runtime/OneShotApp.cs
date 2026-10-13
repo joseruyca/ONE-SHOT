@@ -26,7 +26,7 @@ namespace OneShot.Client {
    var panel=ScriptableObject.CreateInstance<PanelSettings>();panel.scaleMode=PanelScaleMode.ScaleWithScreenSize;panel.referenceResolution=new Vector2Int(600,1000);panel.match=1f;panel.themeStyleSheet=Resources.Load<ThemeStyleSheet>("OneShot");
    var document=gameObject.AddComponent<UIDocument>();document.panelSettings=panel;var surface=document.rootVisualElement;
    surface.style.backgroundColor=art.paper;surface.style.alignItems=Align.Center;var studio=Resources.Load<StyleSheet>("Studio/Studio");if(studio!=null)surface.styleSheets.Add(studio);
-   root=new VisualElement();shell=root;root.style.width=Length.Percent(100);root.style.maxWidth=600;root.style.height=Length.Percent(100);surface.Add(root);
+   root=new VisualElement();shell=root;shell.focusable=true;shell.RegisterCallback<NavigationCancelEvent>(e=>{HandleCancel();e.StopPropagation();});root.style.width=Length.Percent(100);root.style.maxWidth=600;root.style.height=Length.Percent(100);surface.Add(root);
    root.style.backgroundColor=art.paper;root.style.color=art.ink;root.style.flexGrow=1;
    if(art.typography!=null)root.style.unityFontDefinition=FontDefinition.FromFont(art.typography);
    float bottom=Screen.safeArea.y/Screen.height*1000,top=(Screen.height-Screen.safeArea.yMax)/Screen.height*1000;
@@ -35,8 +35,8 @@ namespace OneShot.Client {
   }
   void OnDestroy(){lifetime.Cancel();lifetime.Dispose();gateway?.SignOut();}
   void OnApplicationPause(bool paused){if(paused&&busy)lifetime.Cancel();} // competitive resume not yet implemented
-  void ClearGame(){var modal=shell.Q<VisualElement>("quit-modal");if(modal!=null)modal.RemoveFromHierarchy();shell.Clear();root=new VisualElement();root.AddToClassList("page");shell.Add(root);if(modal!=null)shell.Add(modal);}
-  void Clear(){shell.Clear();var scroll=new ScrollView(ScrollViewMode.Vertical);scroll.style.flexGrow=1;scroll.horizontalScrollerVisibility=ScrollerVisibility.Hidden;scroll.verticalScrollerVisibility=ScrollerVisibility.Hidden;shell.Add(scroll);root=new VisualElement();root.style.width=Length.Percent(100);root.AddToClassList("page");scroll.Add(root);}
+  void ClearGame(){var modal=shell.Q<VisualElement>("quit-modal");if(modal!=null)modal.RemoveFromHierarchy();shell.Clear();root=new VisualElement();root.AddToClassList("page");shell.Add(root);if(modal!=null)shell.Add(modal);shell.Focus();}
+  void Clear(){shell.Clear();var scroll=new ScrollView(ScrollViewMode.Vertical);scroll.style.flexGrow=1;scroll.horizontalScrollerVisibility=ScrollerVisibility.Hidden;scroll.verticalScrollerVisibility=ScrollerVisibility.Hidden;shell.Add(scroll);root=new VisualElement();root.style.width=Length.Percent(100);root.AddToClassList("page");scroll.Add(root);shell.Focus();}
   Label Text(string text,int size=24){var l=new Label(text);l.AddToClassList("copy");l.style.fontSize=size;if(size>=28)l.style.unityFontStyleAndWeight=FontStyle.Bold;l.style.color=art.ink;l.style.whiteSpace=WhiteSpace.Normal;l.style.marginBottom=12;root.Add(l);return l;}
   Button Button(string title,Action action,bool primary=false){var b=new Button(()=>{if(!busy)action();}){text=title};b.AddToClassList("action");b.style.height=72;b.style.minHeight=64;b.style.flexShrink=0;b.style.marginTop=14;b.style.fontSize=24;b.style.unityFontStyleAndWeight=FontStyle.Bold;
    b.style.borderLeftWidth=0;b.style.borderRightWidth=0;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.backgroundColor=primary?new Color32(40,78,207,255):Color.white;b.style.color=primary?Color.white:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}

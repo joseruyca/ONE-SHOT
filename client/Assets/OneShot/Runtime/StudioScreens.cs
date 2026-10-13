@@ -20,7 +20,7 @@ namespace OneShot.Client {
    var row=new VisualElement();row.AddToClassList("round-header");var name=new Label(game.ToUpperInvariant());name.AddToClassList("eyebrow");row.Add(name);var steps=new VisualElement();steps.style.flexDirection=FlexDirection.Row;
    for(int i=0;i<3;i++){var step=new VisualElement();step.AddToClassList("round-step");step.style.backgroundColor=i<=trial?new Color32(40,78,207,255):new Color32(229,222,209,255);steps.Add(step);}row.Add(steps);var exit=new Button(AskQuit){text="×"};exit.AddToClassList("close-game");row.Add(exit);root.Add(row);
   }
-  void Update(){if(Input.GetKeyDown(KeyCode.Escape)){if(busy)AskQuit();else Home();}}
+  void HandleCancel(){var modal=shell.Q<VisualElement>("quit-modal");if(modal!=null){modal.RemoveFromHierarchy();return;}if(busy){if(gameRunning)AskQuit();}else Home();}
   void AskQuit(){
    if(!gameRunning||shell.Q<VisualElement>("quit-modal")!=null)return;
    // Clock keeps running: opening a dialog cannot pause a competitive attempt.
