@@ -7,18 +7,18 @@ namespace OneShot.Client {
   bool competitiveSession,gameRunning;
   void ResetCancellation(){if(!lifetime.IsCancellationRequested)return;lifetime.Dispose();lifetime=new System.Threading.CancellationTokenSource();}
   void Header(string section){
-   var header=new VisualElement();header.AddToClassList("header");var brand=new Label("ONE\nSHOT");brand.AddToClassList("wordmark");header.Add(brand);
+   var header=new VisualElement();header.AddToClassList("header");var brand=new Label("ONE SHOT.");brand.AddToClassList("wordmark");header.Add(brand);
    var badge=new Label(section=="today"?DateTime.Now.ToString("dd MMM",Spanish?new CultureInfo("es-ES"):CultureInfo.InvariantCulture).ToUpperInvariant():L(section=="train"?"nav_train":section=="profile"?"nav_profile":section=="crews"?"nav_crews":section=="run"?"run_title":"copy_033").ToUpperInvariant());badge.AddToClassList("eyebrow");header.Add(badge);root.Add(header);
   }
   void GameCard(string game,Action action){
    var card=new Button(action);card.AddToClassList("game-card");
-   var artwork=new ToyCanvas{Kind=game,Theme=art,Config=new GameConfig{target=6500,windows=new[]{new Window{start=0,end=1000,x=5000,y=5000}}},Elapsed=500,Position=6500};artwork.pickingMode=PickingMode.Ignore;artwork.style.overflow=Overflow.Hidden;artwork.style.width=130;artwork.style.height=100;artwork.style.marginTop=0;artwork.style.marginBottom=0;artwork.style.backgroundColor=Color.clear;card.Add(artwork);
-   var info=new VisualElement();info.style.flexGrow=1;info.style.justifyContent=Justify.Center;var name=new Label(game.ToUpperInvariant());name.AddToClassList("game-name");var trait=new Label(L(game+"_trait"));trait.AddToClassList("game-trait");info.Add(name);info.Add(trait);card.Add(info);
+   var artwork=new ToyCanvas{Kind=game,Theme=art,Preview=true,ReducedMotion=ReducedMotion,Config=new GameConfig{target=6500,windows=new[]{new Window{start=0,end=1000,x=5000,y=5000}}},Elapsed=500,Position=6500};artwork.pickingMode=PickingMode.Ignore;artwork.style.overflow=Overflow.Hidden;artwork.style.width=130;artwork.style.height=100;artwork.style.marginTop=0;artwork.style.marginBottom=0;artwork.style.backgroundColor=Color.clear;card.Add(artwork);
+   var info=new VisualElement();info.style.flexGrow=1;info.style.justifyContent=Justify.Center;var name=new Label(L(game+"_name"));name.AddToClassList("game-name");var trait=new Label(L(game+"_trait"));trait.AddToClassList("game-trait");info.Add(name);info.Add(trait);card.Add(info);
    var arrow=new Label("↗");arrow.style.fontSize=32;arrow.style.marginRight=16;card.Add(arrow);root.Add(card);
   }
   void RoundHeader(string game,int trial){
-   var row=new VisualElement();row.AddToClassList("round-header");var name=new Label(game.ToUpperInvariant());name.AddToClassList("eyebrow");row.Add(name);var steps=new VisualElement();steps.style.flexDirection=FlexDirection.Row;
-   for(int i=0;i<3;i++){var step=new VisualElement();step.AddToClassList("round-step");step.style.backgroundColor=i<=trial?(Color)new Color32(40,78,207,255):(Color)new Color32(229,222,209,255);steps.Add(step);}row.Add(steps);var exit=new Button(AskQuit){text="×"};exit.AddToClassList("close-game");row.Add(exit);root.Add(row);
+   var row=new VisualElement();row.AddToClassList("round-header");var name=new Label(L(game+"_name"));name.AddToClassList("eyebrow");row.Add(name);var steps=new VisualElement();steps.style.flexDirection=FlexDirection.Row;
+   for(int i=0;i<3;i++){var step=new VisualElement();step.name="round-step-"+i;step.AddToClassList("round-step");step.style.backgroundColor=i<=trial?art.accent:(Color)new Color32(225,229,240,255);steps.Add(step);}row.Add(steps);var exit=new Button(AskQuit){text="×"};exit.AddToClassList("close-game");row.Add(exit);root.Add(row);
   }
   void HandleCancel(){var modal=shell.Q<VisualElement>("quit-modal");if(modal!=null){modal.RemoveFromHierarchy();return;}if(busy){if(gameRunning)AskQuit();}else Home();}
   void AskQuit(){

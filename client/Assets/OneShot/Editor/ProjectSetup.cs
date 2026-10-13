@@ -13,10 +13,10 @@ namespace OneShot.Editor {
    if(!File.Exists("Assets/Resources/OneShotBackend.asset"))AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<BackendConfiguration>(),"Assets/Resources/OneShotBackend.asset");
    if(!File.Exists("Assets/Scenes/Main.unity")){var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);EditorSceneManager.SaveScene(scene,"Assets/Scenes/Main.unity");}
    EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene("Assets/Scenes/Main.unity",true)};
-   PlayerSettings.companyName="ONE SHOT";PlayerSettings.productName="ONE SHOT";PlayerSettings.bundleVersion="0.5.0";
+   PlayerSettings.companyName="ONE SHOT";PlayerSettings.productName="ONE SHOT";PlayerSettings.bundleVersion="0.6.0";
    PlayerSettings.defaultInterfaceOrientation=UIOrientation.Portrait;
    PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,"com.oneshot.daily");PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS,"com.oneshot.daily");
-   EnsureStudioArt();AssetDatabase.SaveAssets();
+   AssetDatabase.SaveAssets();
   }
   public static void EnsureStudioArt(){
    foreach(var name in new[]{"Hero","HeroWide","Toys"}){

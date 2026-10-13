@@ -36,16 +36,20 @@ namespace OneShot.Client {
   void OnDestroy(){lifetime.Cancel();lifetime.Dispose();gateway?.SignOut();}
   void OnApplicationPause(bool paused){if(paused&&busy)lifetime.Cancel();} // competitive resume not yet implemented
   void ClearGame(){var modal=shell.Q<VisualElement>("quit-modal");if(modal!=null)modal.RemoveFromHierarchy();shell.Clear();root=new VisualElement();root.AddToClassList("page");shell.Add(root);if(modal!=null)shell.Add(modal);shell.Focus();}
-  void Clear(){shell.Clear();var scroll=new ScrollView(ScrollViewMode.Vertical);scroll.style.flexGrow=1;scroll.horizontalScrollerVisibility=ScrollerVisibility.Hidden;scroll.verticalScrollerVisibility=ScrollerVisibility.Hidden;shell.Add(scroll);root=new VisualElement();root.style.width=Length.Percent(100);root.AddToClassList("page");scroll.Add(root);shell.Focus();}
+  void Clear(){shell.Clear();var scroll=new ScrollView(ScrollViewMode.Vertical);scroll.style.flexGrow=1;scroll.horizontalScrollerVisibility=ScrollerVisibility.Hidden;scroll.verticalScrollerVisibility=ScrollerVisibility.Hidden;shell.Add(scroll);root=new VisualElement();root.style.width=Length.Percent(100);root.AddToClassList("page");scroll.Add(root);shell.Focus();AnimatePage(root);}
+  void AnimatePage(VisualElement page){
+   if(ReducedMotion)return;float began=Time.realtimeSinceStartup;page.style.opacity=0;
+   IVisualElementScheduledItem transition=null;transition=page.schedule.Execute(()=>{float t=Mathf.Clamp01((Time.realtimeSinceStartup-began)/.18f);float ease=1-Mathf.Pow(1-t,3);page.style.opacity=ease;page.style.paddingTop=12+8*(1-ease);if(t>=1)transition.Pause();}).Every(16);
+  }
   Label Text(string text,int size=24){var l=new Label(text);l.AddToClassList("copy");l.style.fontSize=size;if(size>=28)l.style.unityFontStyleAndWeight=FontStyle.Bold;l.style.color=art.ink;l.style.whiteSpace=WhiteSpace.Normal;l.style.marginBottom=12;root.Add(l);return l;}
   Button Button(string title,Action action,bool primary=false){var b=new Button(()=>{if(!busy)action();}){text=title};b.AddToClassList("action");b.style.height=72;b.style.minHeight=64;b.style.flexShrink=0;b.style.marginTop=14;b.style.fontSize=24;b.style.unityFontStyleAndWeight=FontStyle.Bold;
-   b.style.borderLeftWidth=0;b.style.borderRightWidth=0;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.backgroundColor=primary?(Color)new Color32(40,78,207,255):Color.white;b.style.color=primary?Color.white:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
+   b.style.borderLeftWidth=0;b.style.borderRightWidth=0;b.style.borderTopWidth=0;b.style.borderBottomWidth=0;b.style.backgroundColor=primary?art.accent:Color.white;b.style.color=primary?Color.white:art.ink;b.style.borderTopLeftRadius=18;b.style.borderTopRightRadius=18;b.style.borderBottomLeftRadius=18;b.style.borderBottomRightRadius=18;root.Add(b);return b;}
   void Spacer(){var s=new VisualElement();s.style.flexGrow=1;root.Add(s);}
   void Home(){ResetCancellation();Clear();busy=false;Header("today");
    Text(L("studio_headline"),54);Text(L("studio_subtitle"),21);
-   var hero=new Image{image=art.hero,scaleMode=ScaleMode.ScaleAndCrop};hero.AddToClassList("hero");root.Add(hero);
-   var row=new VisualElement();row.AddToClassList("chips");foreach(var name in new[]{"SLICE","PARK","MOSQUITO"}){var chip=new Label(name);chip.AddToClassList("chip");row.Add(chip);}root.Add(row);
-   Button(L("copy_003"),OpenDaily,true);Button(L("studio_practice"),TrainingHub);Text(L("copy_005"),16);Navigation("today");
+   var hero=new ToyCanvas{Kind="collection",Theme=art,Preview=true,ReducedMotion=ReducedMotion};hero.AddToClassList("hero");root.Add(hero);
+   var row=new VisualElement();row.AddToClassList("chips");foreach(var name in new[]{"slice","park","mosquito"}){var chip=new Label(L(name+"_name"));chip.AddToClassList("chip");row.Add(chip);}root.Add(row);
+   Button(L("motion_play"),()=>PlayPractice(),true);Button(L("copy_003"),OpenDaily);Text(L("copy_005"),16);Navigation("today");
   }
   async void OpenDaily(){if(busy)return;
    if(!backend.IsConfigured){Notice(L("copy_006"),L("copy_007"));return;}
@@ -69,43 +73,55 @@ namespace OneShot.Client {
   }
 
   IEnumerator Round(GameConfig round,CancellationToken token,TaskCompletionSource<RoundEvidence> completion,Action<int> prediction){
-   completedNames.Add(round.game);
-   ClearGame();Text(L("round_ready"),20);Text(round.game.ToUpperInvariant(),60);Text(L(round.game+"_guide"),26);Spacer();var ready=Text("",72);
-   for(int count=2;count>=1;count--){ready.text=count.ToString();feedback.Transition();yield return new WaitForSecondsRealtime(1);if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}}
-   var evidence=new List<string>();int combined=0;
    if(round.trials==null||round.trials.Length!=3){completion.TrySetException(new Exception("Unsupported config"));yield break;}
+   completedNames.Add(round.game);ClearGame();Text(L("round_ready"),18);Text(L(round.game+"_name"),56);Text(L(round.game+"_guide"),24);
+   var demo=new ToyCanvas{Kind=round.game,Theme=art,Preview=true,ReducedMotion=ReducedMotion};demo.style.height=280;root.Add(demo);var ready=Text("2",64);
+   for(int count=2;count>=1;count--){ready.text=count.ToString();feedback.Transition();yield return new WaitForSecondsRealtime(1);if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}}
+   // One stage and one set of input handlers for the entire round; no screen reset between actions.
+   ClearGame();RoundHeader(round.game,0);
+   Text(L(round.game=="slice"?"copy_043":round.game=="park"?"copy_044":"copy_045"),38);
+   var objective=Text("",25);var toy=new ToyCanvas{Kind=round.game,Theme=art,ReducedMotion=ReducedMotion};toy.style.height=380;toy.style.minHeight=240;toy.style.flexShrink=0;root.Add(toy);
+   var timerTrack=new VisualElement();timerTrack.AddToClassList("timer-track");var timerFill=new VisualElement();timerFill.AddToClassList("timer-fill");timerTrack.Add(timerFill);root.Add(timerTrack);
+   var progress=Text("",19);var performance=Text(L("motion_touch"),26);performance.style.minHeight=36;
+   var evidence=new List<string>();int combined=0,trialScore=0,activePointer=-1;
+   var events=new List<GameEvent>();var hits=new HashSet<int>();GameConfig config=round.trials[0];double start=0;bool used=false,open=false;Vector2 down=Vector2.zero;
+   void Resolve(Vector2 point,int time){
+    if(!open||time<0||time>config.durationMs)return;
+    if(events.Count>0&&time<=events[events.Count-1].t)return;
+    int x=Mathf.Clamp(Mathf.RoundToInt(point.x/toy.resolvedStyle.width*10000),0,10000),y=Mathf.Clamp(Mathf.RoundToInt(point.y/toy.resolvedStyle.height*10000),0,10000);bool positive=false;
+    if(round.game=="slice"){
+     if(used||!SliceGeometry.TryCut(toy.resolvedStyle.width,toy.resolvedStyle.height,down.x,down.y,point.x,point.y,out int cut))return;
+     used=true;events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;positive=trialScore>=7500;
+    }else if(round.game=="park"){
+     if(used)return;used=true;events.Add(new GameEvent{type="brake",t=time});toy.Stopped=true;toy.Position=(int)((long)time*config.speedPerSecond/1000);trialScore=toy.Position>10000?0:Scoring.Precision(toy.Position,config.target,config.tolerance);positive=trialScore>=7500;
+    }else{
+     if(events.Count>=128)return;events.Add(new GameEvent{type="tap",t=time,x=x,y=y});int index=Array.FindIndex(config.windows,window=>time>=window.start&&time<=window.end&&(long)(x-window.x)*(x-window.x)+(long)(y-window.y)*(y-window.y)<=(long)window.radius*window.radius);
+     positive=index>=0&&hits.Add(index);if(positive)toy.Caught.Add(index);int misses=events.Count-hits.Count;trialScore=Mathf.Max(0,hits.Count*10000/config.windows.Length-misses*500);used=hits.Count==config.windows.Length;
+    }
+    toy.FeedbackAt=time;toy.React(point,positive);feedback.Impact(positive);performance.text=round.game=="mosquito"?hits.Count+" / "+config.windows.Length:trialScore.ToString("N0")+" · "+L(positive?"motion_nice":"motion_retry");
+   }
+   toy.RegisterCallback<PointerDownEvent>(e=>{
+    if(!open||activePointer!=-1)return;activePointer=e.pointerId;down=e.localPosition;toy.StrokeStart=down;toy.StrokeEnd=down;toy.Dragging=round.game=="slice"&&!used;toy.CapturePointer(e.pointerId);
+    // Braking/tapping responds on contact, rather than waiting for finger release.
+    if(round.game!="slice")Resolve(e.localPosition,(int)((Time.realtimeSinceStartupAsDouble-start)*1000));
+   });
+   toy.RegisterCallback<PointerMoveEvent>(e=>{if(e.pointerId==activePointer&&toy.Dragging){toy.StrokeEnd=e.localPosition;toy.MarkDirtyRepaint();}});
+   toy.RegisterCallback<PointerCancelEvent>(e=>{if(e.pointerId==activePointer){activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);}});
+   toy.RegisterCallback<PointerUpEvent>(e=>{if(e.pointerId!=activePointer)return;activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);if(round.game=="slice")Resolve(e.localPosition,(int)((Time.realtimeSinceStartupAsDouble-start)*1000));});
    for(int i=0;i<3;i++){
-    ClearGame();RoundHeader(round.game,i);
-    Text(round.game=="slice"?L("copy_043"):round.game=="park"?L("copy_044"):L("copy_045"),38);
-    var config=round.trials[i];Text(round.game=="slice"?(config.target/100f).ToString("0")+" / "+(100-config.target/100f).ToString("0"):round.game=="park"?L("copy_046"):L("copy_047"),24);
-    var toy=new ToyCanvas{Kind=round.game,Theme=art,Config=config};toy.style.height=380;toy.style.minHeight=240;toy.style.flexShrink=0;root.Add(toy);var timerTrack=new VisualElement();timerTrack.AddToClassList("timer-track");var timerFill=new VisualElement();timerFill.AddToClassList("timer-fill");timerTrack.Add(timerFill);root.Add(timerTrack);var progress=Text("5.0 SEC",20);
-    var performance=Text("",24);performance.style.minHeight=32;
-    var events=new List<GameEvent>();var hits=new HashSet<int>();bool used=false;int trialScore=0;double start=Time.realtimeSinceStartupAsDouble;Vector2 down=Vector2.zero;
-    int activePointer=-1;
-    toy.RegisterCallback<PointerDownEvent>(e=>{if(activePointer!=-1)return;activePointer=e.pointerId;down=e.localPosition;toy.StrokeStart=down;toy.StrokeEnd=down;toy.Dragging=round.game=="slice"&&!used;toy.CapturePointer(e.pointerId);});
-    toy.RegisterCallback<PointerMoveEvent>(e=>{if(e.pointerId==activePointer&&toy.Dragging){toy.StrokeEnd=e.localPosition;toy.MarkDirtyRepaint();}});
-    toy.RegisterCallback<PointerCancelEvent>(e=>{if(e.pointerId==activePointer){activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);}});
-    toy.RegisterCallback<PointerUpEvent>(e=>{
-     if(e.pointerId!=activePointer)return;activePointer=-1;toy.Dragging=false;toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
-     int x=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.x/toy.resolvedStyle.width*10000),0,10000),y=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.y/toy.resolvedStyle.height*10000),0,10000);
-     if(events.Count>0&&time<=events[events.Count-1].t)return;
-     bool positive=false;
-     if(round.game=="slice"){
-      if(used)return;
-      if(!SliceGeometry.TryCut(toy.resolvedStyle.width,toy.resolvedStyle.height,down.x,down.y,e.localPosition.x,e.localPosition.y,out int cut))return;
-      used=true;
-      events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;positive=trialScore>=7500;
-     }else if(round.game=="park"){
-      if(used)return;used=true;events.Add(new GameEvent{type="brake",t=time});toy.Stopped=true;toy.Position=(int)((long)time*config.speedPerSecond/1000);trialScore=toy.Position>10000?0:Scoring.Precision(toy.Position,config.target,config.tolerance);positive=trialScore>=7500;
-     }else{
-      if(events.Count>=128)return;events.Add(new GameEvent{type="tap",t=time,x=x,y=y});int index=Array.FindIndex(config.windows,w=>time>=w.start&&time<=w.end&&(long)(x-w.x)*(x-w.x)+(long)(y-w.y)*(y-w.y)<=(long)w.radius*w.radius);positive=index>=0&&hits.Add(index);int misses=events.Count-hits.Count;trialScore=Mathf.Max(0,hits.Count*10000/config.windows.Length-misses*500);
-     }
-     toy.FeedbackAt=time;toy.Hit=positive;feedback.Impact(positive);performance.text=round.game=="mosquito"?hits.Count+" / "+config.windows.Length:trialScore.ToString("N0")+" PTS";toy.MarkDirtyRepaint();
-    });
-    while((Time.realtimeSinceStartupAsDouble-start)*1000<config.durationMs){if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}toy.Elapsed=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(!toy.Stopped)toy.Position=(int)((long)toy.Elapsed*config.speedPerSecond/1000);toy.style.backgroundColor=Color.Lerp(Color.white,round.game=="slice"?art.slice:round.game=="park"?art.park:art.mosquito,.16f);timerFill.style.width=Length.Percent(100f*Mathf.Clamp01(1-toy.Elapsed/(float)config.durationMs));progress.text=Mathf.Max(0,(config.durationMs-toy.Elapsed)/1000f).ToString("0.0")+" SEC";toy.MarkDirtyRepaint();yield return null;}
-    if(round.game=="mosquito"){int misses=events.Count-hits.Count;trialScore=Mathf.Max(0,hits.Count*10000/config.windows.Length-misses*500);}
+    config=round.trials[i];events=new List<GameEvent>();hits.Clear();used=false;trialScore=0;toy.ResetTrial(config);
+    objective.text=round.game=="slice"?(config.target/100f).ToString("0")+" : "+(100-config.target/100f).ToString("0"):L(round.game=="park"?"copy_046":"copy_047");
+    for(int j=0;j<3;j++){var step=root.Q<VisualElement>("round-step-"+j);if(step!=null)step.style.backgroundColor=j<=i?art.accent:(Color)new Color32(225,229,240,255);}
+    performance.text=L("motion_touch");start=Time.realtimeSinceStartupAsDouble;open=true;
+    while((Time.realtimeSinceStartupAsDouble-start)*1000<config.durationMs){
+     if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}
+     toy.Elapsed=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(!toy.Stopped)toy.Position=(int)((long)toy.Elapsed*config.speedPerSecond/1000);
+     timerFill.style.width=Length.Percent(100f*Mathf.Clamp01(1-toy.Elapsed/(float)config.durationMs));progress.text=(i+1)+" / 3  ·  "+Mathf.Max(0,(config.durationMs-toy.Elapsed)/1000f).ToString("0.0")+" s";
+     if(!competitiveSession&&practiceFast&&used&&toy.Elapsed-toy.FeedbackAt>=550)break;
+     yield return null;
+    }
+    open=false;toy.Dragging=false;if(activePointer!=-1){int pointer=activePointer;activePointer=-1;toy.ReleasePointer(pointer);}
     var parts=new List<string>();foreach(var ev in events)parts.Add(JsonUtility.ToJson(ev));evidence.Add("["+string.Join(",",parts)+"]");combined+=trialScore;
-    ClearGame();Text(L("copy_048"),18);Text(trialScore.ToString("N0"),78);yield return new WaitForSecondsRealtime(.7f);
    }
    if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}practiceScores.Add(combined/3);prediction(combined/3);completion.TrySetResult(new RoundEvidence("["+string.Join(",",evidence)+"]"));
   }

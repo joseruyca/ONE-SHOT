@@ -1,31 +1,32 @@
-.page { padding: 8px 28px 24px 28px; flex-grow: 1; }
-.header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 22px; min-height: 64px; }
-.wordmark { font-size: 26px; -unity-font-style: bold; color: rgb(40,78,207); letter-spacing: -1px; }
-.eyebrow { font-size: 16px; -unity-font-style: bold; letter-spacing: 1px; color: rgb(86,85,92); }
-.hero { height: 320px; min-height: 230px; border-radius: 28px; overflow: hidden; margin-top: 8px; margin-bottom: 10px; flex-shrink: 0; }
-.chips { flex-direction: row; justify-content: space-between; margin-bottom: 4px; }
-.chip { font-size: 14px; -unity-font-style: bold; letter-spacing: 1px; padding: 8px 14px; border-radius: 20px; background-color: rgb(255,232,198); color: rgb(83,65,40); }
-.navigation { flex-direction: row; padding: 8px 20px; border-top-width: 1px; border-top-color: rgb(231,222,207); background-color: rgb(255,247,232); flex-shrink: 0; }
-.action:hover { opacity: .92; }
-.action:active { scale: 0.98 0.98; }
-.action:focus { border-width: 3px; border-color: rgb(255,176,49); }
-.game-card { flex-direction: row; align-items: center; min-height: 128px; padding: 10px; margin: 10px 0; border-radius: 24px; border-width: 1px; border-color: rgb(231,222,207); background-color: rgb(255,253,248); flex-shrink: 0; }
-.game-card:hover { background-color: rgb(255,232,198); }
-.game-card:focus { border-color: rgb(40,78,207); border-width: 3px; }
-.game-name { font-size: 29px; -unity-font-style: bold; color: rgb(29,43,77); }
-.game-trait { font-size: 14px; letter-spacing: .6px; color: rgb(93,94,102); margin-top: 5px; }
-.round-header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-.round-step { width: 26px; height: 7px; border-radius: 4px; margin: 0 4px; }
-.close-game { width: 44px; height: 44px; font-size: 30px; border-width: 0; border-radius: 22px; background-color: rgb(255,232,198); }
-.timer-track { height: 8px; border-radius: 4px; background-color: rgb(229,222,209); margin: 12px 0; overflow: hidden; }
-.timer-fill { height: 8px; border-radius: 4px; background-color: rgb(40,78,207); }
-.history-card { padding: 20px; margin: 6px 0; border-radius: 20px; background-color: rgb(255,253,248); }
-.modal-overlay { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(29,43,77,.65); align-items: center; justify-content: center; }
-.modal-panel { width: 88%; padding: 28px; border-radius: 28px; background-color: rgb(255,247,232); }
-.modal-title { font-size: 34px; -unity-font-style: bold; margin-bottom: 16px; white-space: normal; }
-.modal-action { min-height: 64px; font-size: 22px; margin-top: 18px; border-radius: 18px; border-width: 0; background-color: rgb(40,78,207); color: white; }
+.page { padding: 12px 28px 24px 28px; flex-grow: 1; }
+.header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 24px; min-height: 48px; }
+.wordmark { font-size: 28px; -unity-font-style: bold; color: rgb(31,43,72); letter-spacing: -1px; }
+.eyebrow { font-size: 14px; -unity-font-style: bold; letter-spacing: 1px; color: rgb(106,116,139); }
+.hero { height: 310px; min-height: 230px; border-radius: 30px; overflow: hidden; margin-top: 8px; margin-bottom: 18px; flex-shrink: 0; }
+.chips { flex-direction: row; justify-content: space-between; margin-bottom: 2px; }
+.chip { font-size: 14px; -unity-font-style: bold; letter-spacing: 1px; padding: 9px 16px; border-radius: 18px; background-color: rgb(237,240,248); color: rgb(79,92,119); }
+.navigation { flex-direction: row; padding: 8px 18px; border-top-width: 1px; border-top-color: rgb(230,234,244); background-color: rgb(249,250,255); flex-shrink: 0; }
+.action:hover { opacity: 0.93; }
+.action:active { scale: 0.97 0.97; }
+.action:focus { border-width: 3px; border-color: rgb(80,126,237); }
+.game-card { flex-direction: row; align-items: center; min-height: 132px; padding: 12px; margin: 8px 0; border-radius: 24px; border-width: 1px; border-color: rgb(226,232,243); background-color: white; flex-shrink: 0; }
+.game-card:hover { background-color: rgb(237,242,255); }
+.game-card:active { scale: 0.98 0.98; }
+.game-card:focus { border-color: rgb(80,126,237); border-width: 3px; }
+.game-name { font-size: 30px; -unity-font-style: bold; color: rgb(31,43,72); }
+.game-trait { font-size: 13px; letter-spacing: 0.6px; color: rgb(113,123,143); margin-top: 6px; }
+.round-header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.round-step { width: 32px; height: 7px; border-radius: 4px; margin: 0 4px; }
+.close-game { width: 44px; height: 44px; font-size: 30px; border-width: 0; border-radius: 22px; background-color: rgb(237,240,248); color: rgb(31,43,72); }
+.timer-track { height: 8px; border-radius: 4px; background-color: rgb(230,234,244); margin: 12px 0; overflow: hidden; }
+.timer-fill { height: 8px; border-radius: 4px; background-color: rgb(249,91,107); }
+.history-card { padding: 20px; margin: 6px 0; border-radius: 20px; background-color: white; }
+.modal-overlay { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(31,43,72,0.65); align-items: center; justify-content: center; }
+.modal-panel { width: 88%; padding: 28px; border-radius: 28px; background-color: rgb(249,250,255); }
+.modal-title { font-size: 34px; -unity-font-style: bold; margin-bottom: 16px; white-space: normal; color: rgb(31,43,72); }
+.modal-action { min-height: 64px; font-size: 22px; margin-top: 18px; border-radius: 18px; border-width: 0; background-color: rgb(249,91,107); color: white; }
 TextField { min-height: 70px; margin-top: 10px; }
-TextField > .unity-text-field__input { padding: 16px; border-radius: 12px; background-color: white; color: rgb(29,43,77); }
+TextField > .unity-text-field__input { padding: 16px; border-radius: 12px; background-color: white; color: rgb(31,43,72); }
 Toggle { min-height: 52px; }
-
 .reduced-motion .action:active { scale: 1 1; }
+.reduced-motion .game-card:active { scale: 1 1; }
