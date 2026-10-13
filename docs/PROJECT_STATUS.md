@@ -45,3 +45,11 @@ Usuario ha abierto y jugado el cliente 0.2.1 en Unity; capturas confirman import
 Añadida cámara de fondo para eliminar aviso No cameras rendering. UI centrada con límite de anchura, tipografía en negrita, tarjetas con objetos reconocibles. Renderer ToyCanvas separado; pan/coche/mosquito dibujados con formas propias y texturas sustituibles. Feedback de puntos por acción añadido.
 Updater Windows crea copia de archivos reemplazados, conserva recursos locales no distribuidos y abre el editor. Requiere cerrar Unity. No ejecutado en Windows aquí.
 Nueva revisión aún pendiente de verificar visualmente en Unity; no se declara APK ni acabado de producción.
+
+## 0.4.0 — experiencia completa de práctica
+Navegación Hoy/Practicar/Tu espacio, catálogo de práctica, guía y cuenta atrás por juego, práctica individual o completa, desglose de resultados, mejores marcas locales, sonidos originales sintetizados con volumen configurable y ajuste de sonido/reduced motion.
+Registro por email y contraseña añadido al cliente; requiere verificar configuración/delivery/redirects de Auth antes de release. No se han enviado correos de prueba ni creado usuarios desde el agente. Contraseñas y tokens no se persisten en PlayerPrefs.
+Validación de desglose server-side recibido en cliente añadida al dominio; pruebas CI pendientes de resultado.
+Cliente Unity de esta revisión todavía sin prueba visual/importación. No prometer perfección ni publicación. Crews, account recovery/deletion/export, push, OAuth y competición completa siguen pendientes.
+
+Añadido parser Roslyn de todos los .cs Unity al CI para detectar sintaxis antes de la importación. Este chequeo no valida tipos/API Unity, render ni build móvil.

@@ -25,6 +25,11 @@ class Program {
  static void Check(bool condition,string name){if(!condition)throw new Exception(name);Console.WriteLine("PASS "+name);}
  static async Task MustFail(Func<Task> f){bool failed=false;try{await f();}catch{failed=true;}if(!failed)throw new Exception("Expected failure");}
  static async Task Main(){
+  ResultValidation.Validate(27000,new[]{10000,9000,8000});
+  Check(true,"verified round breakdown");
+  await MustFail(()=>{ResultValidation.Validate(30000,new[]{10000,9000,8000});return Task.CompletedTask;});
+  await MustFail(()=>{ResultValidation.Validate(0,new[]{-1,0,0});return Task.CompletedTask;});
+  await MustFail(()=>{ResultValidation.Validate(0,null);return Task.CompletedTask;});
   Check(SliceGeometry.TryCut(100,100,40.9,0,40.9,100,out var cut)&&cut==3700,"slice crossing ratio");
   Check(!SliceGeometry.TryCut(100,100,0,0,0,100,out _),"outside object is not a cut");
   Check(!SliceGeometry.TryCut(100,100,40,40,40,60,out _),"short gesture is not a cut");

@@ -23,6 +23,7 @@ namespace OneShot.Client {
  [Serializable] public sealed class WorldResponse {public int rank,population;public float topPercent;public bool provisional;}
  public sealed class CompetitionGateway : ICompetitionGateway {
   readonly MonoBehaviour host;readonly BackendConfiguration configuration;string accessToken;
+  public int[] LastScores { get; private set; }=Array.Empty<int>();
   public bool SignedIn => !string.IsNullOrEmpty(accessToken);
   public CompetitionGateway(MonoBehaviour host,BackendConfiguration configuration){this.host=host;this.configuration=configuration;}
   public Task SignIn(string email,string password,CancellationToken cancellation){
@@ -33,7 +34,12 @@ namespace OneShot.Client {
    var response=JsonUtility.FromJson<AuthResponse>(json);
    if(string.IsNullOrEmpty(response?.access_token))throw new InvalidOperationException("Authentication failed");accessToken=response.access_token;
   }
-  public void SignOut(){accessToken=null;}
+  public async Task<bool> Register(string email,string password,CancellationToken cancellation){
+   string json=await Request("/auth/v1/signup",JsonUtility.ToJson(new Login{email=email,password=password}),false,cancellation);
+   var response=JsonUtility.FromJson<AuthResponse>(json);
+   if(!string.IsNullOrEmpty(response?.access_token)){accessToken=response.access_token;return true;}return false;
+  }
+  public void SignOut(){accessToken=null;LastScores=Array.Empty<int>();}
   public async Task<ShotSummary> Today(CancellationToken c){return JsonUtility.FromJson<TodayResponse>(await Request("/functions/v1/competition","{\"action\":\"today\"}",true,c)).shot;}
   public async Task<WorldResponse> World(string shot,CancellationToken c){return JsonUtility.FromJson<WorldResponse>(await Request("/functions/v1/competition","{\"action\":\"world\",\"shotId\":\""+Guid.Parse(shot)+"\"}",true,c));}
   public async Task<Attempt> StartAsync(string shotId,string idempotencyKey,CancellationToken c){
@@ -48,7 +54,8 @@ namespace OneShot.Client {
    var parts=new List<string>();foreach(var e in evidence)parts.Add(e.EventsJson);
    string body="{\"action\":\"submit\",\"attemptId\":\""+Guid.Parse(a.Id)+"\",\"configHash\":"+JsonString(a.ConfigHash)+",\"evidence\":["+string.Join(",",parts)+"]}";
    var r=JsonUtility.FromJson<ScoreResponse>(await Request("/functions/v1/competition",body,true,c));
-   if(r==null||r.status!="completed")throw new InvalidOperationException("Result not verified");return new VerifiedResult(r.total);
+   if(r==null||r.status!="completed")throw new InvalidOperationException("Result not verified");
+   ResultValidation.Validate(r.total,r.scores);LastScores=(int[])r.scores.Clone();return new VerifiedResult(r.total);
   }
   static string JsonString(string value){return "\""+value.Replace("\\","\\\\").Replace("\"","\\\"")+"\"";}
   Task<string> Request(string path,string body,bool authenticated,CancellationToken c){

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using OneShot.Core;
 namespace OneShot.Client {
- public sealed class OneShotApp : MonoBehaviour {
+ public sealed partial class OneShotApp : MonoBehaviour {
   ArtTheme art;BackendConfiguration backend;CompetitionGateway gateway;VisualElement root;ShotRunner runner;
   CancellationTokenSource lifetime=new CancellationTokenSource();bool busy;string dailyId;
   bool Spanish=>Application.systemLanguage==SystemLanguage.Spanish;
@@ -29,7 +29,7 @@ namespace OneShot.Client {
    if(art.typography!=null)root.style.unityFontDefinition=FontDefinition.FromFont(art.typography);
    float bottom=Screen.safeArea.y/Screen.height*1000,top=(Screen.height-Screen.safeArea.yMax)/Screen.height*1000;
    root.style.paddingTop=top+24;root.style.paddingBottom=bottom+24;root.style.paddingLeft=32;root.style.paddingRight=32;
-   gateway=new CompetitionGateway(this,backend);Home();
+   gateway=new CompetitionGateway(this,backend);feedback=gameObject.AddComponent<FeedbackAudio>();feedback.Initialize(art);Home();
   }
   void OnDestroy(){lifetime.Cancel();lifetime.Dispose();gateway?.SignOut();}
   void OnApplicationPause(bool paused){if(paused&&busy)lifetime.Cancel();} // competitive resume not yet implemented
@@ -43,8 +43,8 @@ namespace OneShot.Client {
    var preview=new VisualElement();preview.style.flexDirection=FlexDirection.Row;preview.style.justifyContent=Justify.SpaceBetween;preview.style.marginTop=14;
    foreach(var name in new[]{"SLICE","PARK","MOSQUITO"}){var item=new Label(name);item.style.fontSize=16;item.style.unityFontStyleAndWeight=FontStyle.Bold;preview.Add(item);}root.Add(preview);Spacer();
    Button(L("copy_003"),OpenDaily,true);
-   Button(L("copy_004"),()=>PlayPractice());
-   Text(L("copy_005"),18);
+   Button(L("copy_004"),TrainingHub);
+   Text(L("copy_005"),18);Navigation("today");
   }
   async void OpenDaily(){if(busy)return;
    if(!backend.IsConfigured){Notice(L("copy_006"),L("copy_007"));return;}
@@ -52,17 +52,11 @@ namespace OneShot.Client {
    busy=true;Clear();Text(L("copy_008"),38);
    try{var s=await gateway.Today(lifetime.Token);if(s==null){Notice(L("copy_009"),L("copy_010"));return;}dailyId=s.shotId;Clear();Text(s.label,52);Text(L("copy_011")+Mathf.RoundToInt(s.durationMs/1000f)+" SEC");Text(L("copy_012"));busy=false;Button(L("copy_013"),PlayDaily,true);Button(L("copy_014"),Home);}catch{Notice(L("copy_015"),L("copy_016"));}finally{busy=false;}
   }
-  void Login(){Clear();Text(L("copy_017"),44);Text(L("copy_018"));
-   var email=new TextField(L("copy_019"));email.style.height=64;root.Add(email);var password=new TextField(L("copy_020")){isPasswordField=true};password.style.height=64;root.Add(password);
-   Button(L("copy_021"),async()=>{if(busy)return;busy=true;try{await gateway.SignIn(email.value,password.value,lifetime.Token);password.value="";busy=false;OpenDaily();}catch{password.value="";Text(L("copy_022"),20);}finally{busy=false;}},true);Button(L("copy_023"),Home);
-  }
-  async void PlayDaily(){if(busy)return;busy=true;runner=new ShotRunner(gateway,name=>new UnityGame(this));
+  async void PlayDaily(){if(busy)return;busy=true;completedNames.Clear();practiceScores.Clear();runner=new ShotRunner(gateway,name=>new UnityGame(this));
    try{var r=await runner.RunAsync(dailyId,Guid.NewGuid().ToString(),lifetime.Token);ShowResult(r.Total,false);}
    catch{Clear();Text(L("copy_024"),44);Text(L("copy_025"));if(runner.State==RunnerState.PendingSubmission)Button(L("copy_026"),RetrySubmit,true);Button(L("copy_027"),Home);}finally{busy=false;}
   }
   async void RetrySubmit(){if(busy)return;busy=true;try{var r=await runner.SubmitAsync(lifetime.Token);ShowResult(r.Total,false);}catch{Text(L("copy_028"),20);}finally{busy=false;}}
-  async void PlayPractice(){if(busy)return;busy=true;int total=0;try{foreach(var config in PracticeConfigs()){using(var g=new UnityGame(this)){await g.PlayAsync(new RoundConfig(config.game,"2",config.durationMs,JsonUtility.ToJson(config)),lifetime.Token);total+=g.PredictedScore;}}ShowResult(total,true);}catch{Notice(L("copy_029"),L("copy_030"));}finally{busy=false;}}
-  void ShowResult(int total,bool practice){Clear();Text(practice?L("copy_031"):L("copy_032"),20);Text(total.ToString("N0"),92);Text(L("copy_033"),30);Spacer();if(!practice)Button(L("copy_034"),World);Button(practice?L("copy_035"):L("copy_036"),practice?(Action)PlayPractice:Home,true);if(practice)Button(L("copy_037"),Home);}
   async void World(){if(busy)return;busy=true;try{var w=await gateway.World(dailyId,lifetime.Token);Text(w.population<20?L("copy_038"):"TOP "+w.topPercent.ToString("0.0")+"%",28);Text(L("copy_039")+w.population+(w.provisional?L("copy_040"):""),20);}catch{Text(L("copy_041"),20);}finally{busy=false;}}
   void Notice(string title,string message){Clear();Text(title,44);Text(message,24);Spacer();Button(L("copy_042"),Home,true);}
   GameConfig[] PracticeConfigs(){var games=new[]{"slice","park","mosquito"};var rounds=new GameConfig[3];for(int r=0;r<3;r++){rounds[r]=new GameConfig{game=games[r],version="2",durationMs=15000,trials=new GameConfig[3]};for(int i=0;i<3;i++){var t=new GameConfig{game=games[r],durationMs=5000,target=games[r]=="slice"?UnityEngine.Random.Range(2500,7500):UnityEngine.Random.Range(5000,8500),tolerance=games[r]=="slice"?5000:3000,speedPerSecond=2200};if(r==2)t.windows=new[]{new Window{start=500,end=1100,x=UnityEngine.Random.Range(2000,8000),y=UnityEngine.Random.Range(2000,8000),radius=1200},new Window{start=1800,end=2400,x=UnityEngine.Random.Range(2000,8000),y=UnityEngine.Random.Range(2000,8000),radius=1200},new Window{start=3200,end=3800,x=UnityEngine.Random.Range(2000,8000),y=UnityEngine.Random.Range(2000,8000),radius=1200}};rounds[r].trials[i]=t;}}return rounds;}
@@ -71,15 +65,18 @@ namespace OneShot.Client {
    public Task<RoundEvidence> PlayAsync(RoundConfig c,CancellationToken token){var completion=new TaskCompletionSource<RoundEvidence>();app.StartCoroutine(app.Round(JsonUtility.FromJson<GameConfig>(c.ParametersJson),token,completion,s=>PredictedScore=s));return completion.Task;}
    public void Dispose(){}
   }
-  static bool indexFeedback(string game,int score)=>score>=7500;
+
   IEnumerator Round(GameConfig round,CancellationToken token,TaskCompletionSource<RoundEvidence> completion,Action<int> prediction){
+   completedNames.Add(round.game);
+   Clear();Text(L("round_ready"),20);Text(round.game.ToUpperInvariant(),60);Text(L(round.game+"_guide"),26);Spacer();var ready=Text("",72);
+   for(int count=2;count>=1;count--){ready.text=count.ToString();feedback.Transition();yield return new WaitForSecondsRealtime(1);if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}}
    var evidence=new List<string>();int combined=0;
    if(round.trials==null||round.trials.Length!=3){completion.TrySetException(new Exception("Unsupported config"));yield break;}
    for(int i=0;i<3;i++){
     Clear();Text(round.game.ToUpperInvariant()+" · "+(i+1)+"/3",22);
     Text(round.game=="slice"?L("copy_043"):round.game=="park"?L("copy_044"):L("copy_045"),38);
     var config=round.trials[i];Text(round.game=="slice"?(config.target/100f).ToString("0")+" / "+(100-config.target/100f).ToString("0"):round.game=="park"?L("copy_046"):L("copy_047"),24);
-    var toy=new ToyCanvas{Kind=round.game,Theme=art,Config=config};toy.style.height=430;toy.style.minHeight=240;toy.style.flexShrink=1;toy.style.flexGrow=1;root.Add(toy);var progress=Text("5.0 SEC",20);
+    var toy=new ToyCanvas{Kind=round.game,Theme=art,Config=config};toy.style.height=430;toy.style.minHeight=240;toy.style.flexShrink=1;toy.style.flexGrow=1;root.Add(toy);var timerBar=new ProgressBar{lowValue=0,highValue=100,value=100};timerBar.style.height=10;timerBar.style.marginBottom=14;root.Add(timerBar);var progress=Text("5.0 SEC",20);
     var performance=Text("",24);performance.style.minHeight=32;
     var events=new List<GameEvent>();var hits=new HashSet<int>();bool used=false;int trialScore=0;double start=Time.realtimeSinceStartupAsDouble;Vector2 down=Vector2.zero;
     int activePointer=-1;
@@ -89,24 +86,25 @@ namespace OneShot.Client {
      if(e.pointerId!=activePointer)return;activePointer=-1;toy.ReleasePointer(e.pointerId);int time=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(time<0||time>config.durationMs)return;
      int x=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.x/toy.resolvedStyle.width*10000),0,10000),y=Mathf.Clamp(Mathf.RoundToInt(e.localPosition.y/toy.resolvedStyle.height*10000),0,10000);
      if(events.Count>0&&time<=events[events.Count-1].t)return;
+     bool positive=false;
      if(round.game=="slice"){
       if(used)return;
       if(!SliceGeometry.TryCut(toy.resolvedStyle.width,toy.resolvedStyle.height,down.x,down.y,e.localPosition.x,e.localPosition.y,out int cut))return;
       used=true;
-      events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;
+      events.Add(new GameEvent{type="cut",t=time,x=cut});trialScore=Scoring.Precision(cut,config.target,config.tolerance);toy.Cut=cut;positive=trialScore>=7500;
      }else if(round.game=="park"){
-      if(used)return;used=true;events.Add(new GameEvent{type="brake",t=time});toy.Stopped=true;toy.Position=(int)((long)time*config.speedPerSecond/1000);trialScore=toy.Position>10000?0:Scoring.Precision(toy.Position,config.target,config.tolerance);
+      if(used)return;used=true;events.Add(new GameEvent{type="brake",t=time});toy.Stopped=true;toy.Position=(int)((long)time*config.speedPerSecond/1000);trialScore=toy.Position>10000?0:Scoring.Precision(toy.Position,config.target,config.tolerance);positive=trialScore>=7500;
      }else{
-      if(events.Count>=128)return;events.Add(new GameEvent{type="tap",t=time,x=x,y=y});int index=Array.FindIndex(config.windows,w=>time>=w.start&&time<=w.end&&(long)(x-w.x)*(x-w.x)+(long)(y-w.y)*(y-w.y)<=(long)w.radius*w.radius);if(index>=0&&hits.Add(index))trialScore=Mathf.Max(0,trialScore+10000/config.windows.Length);else trialScore=Mathf.Max(0,trialScore-500);
+      if(events.Count>=128)return;events.Add(new GameEvent{type="tap",t=time,x=x,y=y});int index=Array.FindIndex(config.windows,w=>time>=w.start&&time<=w.end&&(long)(x-w.x)*(x-w.x)+(long)(y-w.y)*(y-w.y)<=(long)w.radius*w.radius);positive=index>=0&&hits.Add(index);int misses=events.Count-hits.Count;trialScore=Mathf.Max(0,hits.Count*10000/config.windows.Length-misses*500);
      }
-     toy.FeedbackAt=time;toy.Hit=indexFeedback(round.game,trialScore);performance.text=round.game=="mosquito"?hits.Count+" / "+config.windows.Length:trialScore.ToString("N0")+" PTS";toy.MarkDirtyRepaint();
+     toy.FeedbackAt=time;toy.Hit=positive;feedback.Impact(positive);performance.text=round.game=="mosquito"?hits.Count+" / "+config.windows.Length:trialScore.ToString("N0")+" PTS";toy.MarkDirtyRepaint();
     });
-    while((Time.realtimeSinceStartupAsDouble-start)*1000<config.durationMs){if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}toy.Elapsed=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(!toy.Stopped)toy.Position=(int)((long)toy.Elapsed*config.speedPerSecond/1000);toy.style.backgroundColor=Color.Lerp(Color.white,round.game=="slice"?art.slice:round.game=="park"?art.park:art.mosquito,.16f);progress.text=Mathf.Max(0,(config.durationMs-toy.Elapsed)/1000f).ToString("0.0")+" SEC";toy.MarkDirtyRepaint();yield return null;}
+    while((Time.realtimeSinceStartupAsDouble-start)*1000<config.durationMs){if(token.IsCancellationRequested){completion.TrySetCanceled();yield break;}toy.Elapsed=(int)((Time.realtimeSinceStartupAsDouble-start)*1000);if(!toy.Stopped)toy.Position=(int)((long)toy.Elapsed*config.speedPerSecond/1000);toy.style.backgroundColor=Color.Lerp(Color.white,round.game=="slice"?art.slice:round.game=="park"?art.park:art.mosquito,.16f);timerBar.value=100f*Mathf.Clamp01(1-toy.Elapsed/(float)config.durationMs);progress.text=Mathf.Max(0,(config.durationMs-toy.Elapsed)/1000f).ToString("0.0")+" SEC";toy.MarkDirtyRepaint();yield return null;}
     if(round.game=="mosquito"){int misses=events.Count-hits.Count;trialScore=Mathf.Max(0,hits.Count*10000/config.windows.Length-misses*500);}
     var parts=new List<string>();foreach(var ev in events)parts.Add(JsonUtility.ToJson(ev));evidence.Add("["+string.Join(",",parts)+"]");combined+=trialScore;
     Clear();Text(L("copy_048"),18);Text(trialScore.ToString("N0"),78);yield return new WaitForSecondsRealtime(.7f);
    }
-   prediction(combined/3);completion.TrySetResult(new RoundEvidence("["+string.Join(",",evidence)+"]"));
+   practiceScores.Add(combined/3);prediction(combined/3);completion.TrySetResult(new RoundEvidence("["+string.Join(",",evidence)+"]"));
   }
  }
 }

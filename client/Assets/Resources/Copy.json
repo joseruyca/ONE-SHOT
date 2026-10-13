@@ -239,6 +239,166 @@
       "key": "copy_048",
       "es": "MARCA ESTIMADA",
       "en": "ESTIMATED PERFORMANCE"
+    },
+    {
+      "key": "nav_today",
+      "es": "Hoy",
+      "en": "Today"
+    },
+    {
+      "key": "nav_train",
+      "es": "Practicar",
+      "en": "Practice"
+    },
+    {
+      "key": "nav_profile",
+      "es": "Tu espacio",
+      "en": "Your space"
+    },
+    {
+      "key": "training_title",
+      "es": "Entrena tu mano.",
+      "en": "Train your hand."
+    },
+    {
+      "key": "training_note",
+      "es": "Elige una prueba o juega el recorrido completo. Aquí puedes repetir sin límite.",
+      "en": "Choose one challenge or play the full session. Practice as often as you want."
+    },
+    {
+      "key": "training_full",
+      "es": "LAS TRES PRUEBAS →",
+      "en": "ALL THREE ROUNDS →"
+    },
+    {
+      "key": "slice_guide",
+      "es": "Desliza de arriba abajo atravesando el pan. Intenta dejar a la izquierda el porcentaje indicado.",
+      "en": "Swipe vertically through the bread. Leave the indicated percentage on the left."
+    },
+    {
+      "key": "park_guide",
+      "es": "El coche avanza solo. Toca la pista para frenarlo lo más cerca posible de la marca.",
+      "en": "The car moves on its own. Tap the track to stop as close to the mark as possible."
+    },
+    {
+      "key": "mosquito_guide",
+      "es": "Toca al mosquito mientras esté visible. Cada fallo resta puntos; cada objetivo cuenta una sola vez.",
+      "en": "Tap the mosquito while it is visible. Misses cost points; each target counts once."
+    },
+    {
+      "key": "try_game",
+      "es": "PROBAR →",
+      "en": "TRY IT →"
+    },
+    {
+      "key": "profile_title",
+      "es": "Tu espacio.",
+      "en": "Your space."
+    },
+    {
+      "key": "profile_note",
+      "es": "Tus mejores marcas de práctica en este dispositivo.",
+      "en": "Your best practice results on this device."
+    },
+    {
+      "key": "practice_best",
+      "es": "Mejor práctica: ",
+      "en": "Practice best: "
+    },
+    {
+      "key": "no_record",
+      "es": "Sin marca todavía",
+      "en": "No result yet"
+    },
+    {
+      "key": "settings_audio",
+      "es": "Sonido",
+      "en": "Sound"
+    },
+    {
+      "key": "settings_motion",
+      "es": "Reducir animaciones",
+      "en": "Reduce motion"
+    },
+    {
+      "key": "account_signin",
+      "es": "Entrar en mi cuenta",
+      "en": "Sign in to my account"
+    },
+    {
+      "key": "account_signout",
+      "es": "Cerrar sesión",
+      "en": "Sign out"
+    },
+    {
+      "key": "account_create",
+      "es": "Crear cuenta",
+      "en": "Create account"
+    },
+    {
+      "key": "account_switch_login",
+      "es": "Ya tengo cuenta",
+      "en": "I already have an account"
+    },
+    {
+      "key": "account_signup_title",
+      "es": "Tu próxima revancha.",
+      "en": "Your next rematch."
+    },
+    {
+      "key": "account_signup_note",
+      "es": "Confirma tu correo para poder entrar. Tu contraseña no se guarda en el dispositivo.",
+      "en": "Confirm your email to sign in. Your password is not stored on this device."
+    },
+    {
+      "key": "account_pending",
+      "es": "Revisa tu correo y confirma la cuenta. Después vuelve a Entrar.",
+      "en": "Check your email and confirm your account. Then return to Sign in."
+    },
+    {
+      "key": "account_invalid",
+      "es": "Introduce un correo válido y una contraseña de al menos 12 caracteres para crear una cuenta.",
+      "en": "Use a valid email and a password of at least 12 characters to create an account."
+    },
+    {
+      "key": "account_processing",
+      "es": "Conectando…",
+      "en": "Connecting…"
+    },
+    {
+      "key": "round_ready",
+      "es": "SIGUIENTE PRUEBA",
+      "en": "NEXT ROUND"
+    },
+    {
+      "key": "results_breakdown",
+      "es": "Tu recorrido",
+      "en": "Your rounds"
+    },
+    {
+      "key": "results_practice_note",
+      "es": "Resultado de práctica. No cuenta para la clasificación.",
+      "en": "Practice result. It does not enter the leaderboard."
+    },
+    {
+      "key": "results_new_best",
+      "es": "Nueva mejor marca de práctica",
+      "en": "New practice best"
+    },
+    {
+      "key": "guide_start",
+      "es": "EMPEZAR PRÁCTICA →",
+      "en": "START PRACTICE →"
+    },
+    {
+      "key": "guide_back",
+      "es": "Volver a practicar",
+      "en": "Back to practice"
+    },
+    {
+      "key": "account_unavailable",
+      "es": "No se ha podido completar. Comprueba los datos o vuelve a intentarlo más tarde.",
+      "en": "Could not complete the request. Check your details or try again later."
     }
   ]
 }

@@ -34,3 +34,4 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - run: dotnet run --project tests/Domain/Domain.csproj
+      - run: dotnet run --project tests/SyntaxCheck/SyntaxCheck.csproj
