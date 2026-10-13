@@ -18,6 +18,7 @@ namespace OneShot.Client {
   }
   void Start(){
    if(Camera.main==null){var cameraObject=new GameObject("ONE SHOT Camera");var camera=cameraObject.AddComponent<Camera>();cameraObject.tag="MainCamera";camera.clearFlags=CameraClearFlags.SolidColor;camera.cullingMask=0;camera.backgroundColor=new Color32(247,249,246,255);}
+   if(UnityEngine.Object.FindFirstObjectByType<AudioListener>()==null&&Camera.main!=null)Camera.main.gameObject.AddComponent<AudioListener>();
    copy=new Localizer(Spanish);Application.targetFrameRate=60;Screen.orientation=ScreenOrientation.Portrait;
    art=Resources.Load<ArtTheme>("OneShotArt")??ScriptableObject.CreateInstance<ArtTheme>();
    backend=Resources.Load<BackendConfiguration>("OneShotBackend")??ScriptableObject.CreateInstance<BackendConfiguration>();
