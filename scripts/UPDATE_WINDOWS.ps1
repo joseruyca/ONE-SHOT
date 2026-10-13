@@ -26,6 +26,15 @@ foreach($file in Get-ChildItem $source -File -Recurse){
 Set-Content (Join-Path $ProjectRoot 'SOURCE_COMMIT.txt') $sha
 $editor=Join-Path $env:ProgramFiles 'Unity\Hub\Editor\6000.3.26f1\Editor\Unity.exe'
 if(-not(Test-Path $editor)){throw 'Codigo actualizado; no encuentro el editor Unity 6000.3.26f1.'}
-Write-Host "ONE SHOT actualizado: $sha" -ForegroundColor Green
+$qaLog=Join-Path $ProjectRoot 'UNITY_IMPORT_QA.log'
+$qaReport=Join-Path $client 'Builds\IMPORT_QA.txt'
+if(Test-Path $qaReport){Remove-Item -LiteralPath $qaReport}
+Write-Host 'Comprobando compilacion e importacion en Unity. Puede tardar unos minutos.'
+$check=Start-Process $editor -ArgumentList ('-batchmode -nographics -quit -projectPath "'+$client+'" -executeMethod OneShot.Editor.Validation.Check -logFile "'+$qaLog+'"') -Wait -PassThru
+if($check.ExitCode -ne 0 -or -not(Test-Path $qaReport)){
+ if(Test-Path $qaLog){Get-Content -LiteralPath $qaLog -Tail 40}
+ throw "Unity no ha validado esta revision. Log: $qaLog. Archivos anteriores: $backup"
+}
+Write-Host "ONE SHOT actualizado e importado: $sha" -ForegroundColor Green
 Write-Host "Copia de archivos anteriores: $backup"
 Start-Process $editor -ArgumentList ('-projectPath "'+$client+'"')
